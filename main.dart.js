@@ -81338,7 +81338,7 @@ $0(){return A.a1w(this.a).ug("/zombies",null)},
 $S:0}
 A.um.prototype={
 O(a){var s=null
-return A.apB(A.aol(s,A.mD("Zombies",s,s,s)),A.iV(A.at1(A.mD("This is the Zombies page.",s,s,s),new A.aeo(a)),s,s),s)}}
+return A.apB(A.aol(s,A.mD("Zombies",s,s,s)),A.iV(A.at1(A.mD("Return home.",s,s,s),new A.aeo(a)),s,s),s)}}
 A.aeo.prototype={
 $0(){return A.a1w(this.a).ug("/",null)},
 $S:0}
