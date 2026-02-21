@@ -14,7 +14,7 @@ class ZombiesPage extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () => context.go('/'),
-          child: Text('This is the Zombies page.')
+          child: Text('Return home.')
 
         ),
       ),
