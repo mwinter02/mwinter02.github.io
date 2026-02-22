@@ -1,10 +1,24 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'router.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'theme/theme.dart';
 import 'widgets/dynamic_widget.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
+
+  // Light status-bar icons (white) on the dark background.
+  // Also colours the home-indicator area on Android to match.
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Color(0xFF0D0D14),
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark,
+    systemNavigationBarColor: Color(0xFF0D0D14),
+    systemNavigationBarIconBrightness: Brightness.light,
+  ));
+
   runApp(const MyApp());
 }
 
