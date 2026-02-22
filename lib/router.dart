@@ -21,6 +21,12 @@ class RouteNames {
   static const String collider = '$projects/collider';
   static const String airobic = '$projects/airobic';
   static const String terrain = '$projects/terrain';
+
+
+  static const List<String> all = [
+    home,
+    projects,
+    zombies, pngchaser, collider, airobic, terrain];
 }
 
 class Routes {
@@ -70,4 +76,10 @@ final GoRouter appRouter = GoRouter(
   routes: <RouteBase>[
     Routes.home,
   ],
+  redirect: (context, state) {
+    if (!RouteNames.all.contains(state.matchedLocation)) {
+      return RouteNames.home;
+    }
+    return null;
+  },
 );
