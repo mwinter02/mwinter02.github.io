@@ -34,6 +34,11 @@ class Projects {
     pacman,
   ];
 
+  static const String markdownRootDir = 'assets/markdown/';
+
+  static String getMdPath(String projectName) {
+    return '$markdownRootDir$projectName.md';
+  }
   static final zombies = Project(
     route: '$_projectsPath/zombies',
     imagePath: 'assets/images/banners/zombies.png',
@@ -41,7 +46,7 @@ class Projects {
     description:
         'A top-down survival shooter with procedural pathfinding and skeletal animation.',
     tags: const ['Game Engines', 'Java'],
-    markdownPath: 'markdown/zombies.md',
+    markdownPath: getMdPath('zombies'),
   );
   static final pngchaser = Project(
     route: '$_projectsPath/pngchaser',
@@ -50,7 +55,7 @@ class Projects {
     description:
         'Real-time image processing tool built around custom rendering pipelines.',
     tags: ['C++', 'Game Engines', 'OpenGL', 'GLSL'],
-    markdownPath: 'markdown/pngchaser.md',
+    markdownPath: getMdPath('pngchaser'),
   );
 
   static final collider = Project(
@@ -60,7 +65,7 @@ class Projects {
     description:
         'Interactive collider design too with real-time feedback for game development and 3D modeling',
     tags: ['C++', 'Tools'],
-    markdownPath: 'markdown/collider.md',
+    markdownPath: getMdPath('collider'),
   );
   static final terrain = Project(
     route: '$_projectsPath/terrain',
@@ -68,7 +73,7 @@ class Projects {
     title: 'Terrain Painter',
     description: 'Procedural terrain generation from 2D paintings',
     tags: ['C++', 'GLSL', 'OpenGL'],
-    markdownPath: 'markdown/terrain.md',
+    markdownPath: getMdPath('terrain'),
   );
   static final airobic = Project(
     route: '$_projectsPath/airobic',
@@ -76,7 +81,7 @@ class Projects {
     title: 'AIRobic',
     description: 'AI powered workout generator',
     tags: ['AI', 'React', 'Full Stack'],
-    markdownPath: 'markdown/airobic.md',
+    markdownPath: getMdPath('airobic'),
   );
   static final urbanize = Project(
     route: '$_projectsPath/urbanize',
@@ -84,7 +89,7 @@ class Projects {
     title: 'Urbanize',
     description: 'Attribute trained Urban scene generation with GANs',
     tags: ['Python', 'TensorFlow', 'Deep Learning'],
-    markdownPath: 'markdown/urbanize.md',
+    markdownPath: getMdPath('urbanize'),
   );
   static final argo = Project(
     route: '$_projectsPath/argo',
@@ -93,7 +98,7 @@ class Projects {
     description:
         'Full stack cross-platform recruiting app built with Flutter and Firebase',
     tags: ['Flutter', 'Firebase', 'Full Stack'],
-    markdownPath: 'markdown/argo.md',
+    markdownPath: getMdPath('argo'),
   );
 
   static final pacman = Project(
@@ -102,7 +107,7 @@ class Projects {
     title: 'Pacman',
     description: 'A faithful recreation of the classic arcade game, built in my first semester of coding.',
     tags: ['Java', 'Game Dev'],
-    markdownPath: 'markdown/pacman.md',
+    markdownPath: getMdPath('pacman'),
   );
 }
 
