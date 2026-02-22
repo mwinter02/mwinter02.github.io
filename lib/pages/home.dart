@@ -1,16 +1,18 @@
-
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:website/widgets/dynamic_widget.dart';
+import 'package:website/router.dart';
+import 'package:website/widgets/project_card.dart';
+import 'package:website/widgets/site_widgets.dart';
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends DynamicStatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  DynamicState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends DynamicState<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -25,64 +27,79 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+  Widget desktopView(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text('Flutter Demo Home Page'),
-      ),
+      appBar: siteAppBar(context),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Display the SVG asset
-            SvgPicture.asset(
-              'assets/images/logo.svg',
-              width: 120,
-              height: 120,
-            ),
+            SvgPicture.asset('assets/images/logo.svg', width: 120, height: 120),
             const SizedBox(height: 24),
             const Text('You have pushed the button this many times:'),
             ElevatedButton(
-                onPressed: () => context.go('/zombies'),
-                child: const Text("To zombies page")),
+              onPressed: () => context.go(RouteNames.projects),
+              child: const Text("To projects page"),
+            ),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            _projectsBanner(context),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+    );
+  }
+
+  @override
+  Widget mobileView(BuildContext context) {
+    return desktopView(context);
+  }
+
+
+  Widget _projectsBanner(BuildContext context) {
+    List<Widget> projectCards = [
+      ProjectCard(
+        route: RouteNames.zombies,
+        imagePath: 'assets/images/banners/zombies.png',
+        title: 'Zombies',
+      ),
+      ProjectCard(
+        route: RouteNames.pngchaser,
+        imagePath: 'assets/images/banners/pngchaser.png',
+        title: 'PNG Chaser',
+      ),
+      // Add more project cards here as needed
+    ];
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 8.0),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 500,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 16 / 9,
+        ),
+        itemCount: projectCards.length,
+        itemBuilder: (context, index) => projectCards[index],
+      ),
+    );
+  }
+
+  Widget _profilePicture(BuildContext context) {
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          image: AssetImage('assets/images/profile_picture.png'),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
