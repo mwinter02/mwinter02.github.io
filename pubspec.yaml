@@ -78,7 +78,17 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/images/banners/
+
+      # Project Data
     - assets/markdown/
+    - assets/images/projects/
+
+    - assets/images/projects/collider/
+    - assets/images/projects/pngchaser/
+    - assets/images/projects/zombies/
+    - assets/images/projects/airobic/
+    - assets/images/projects/terrain/
+
 
 
   fonts:
