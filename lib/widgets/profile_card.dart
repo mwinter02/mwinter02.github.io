@@ -585,6 +585,8 @@ class _TrainerCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
+            const SizedBox(height: 4),
+            _TapToFlip(),
             _CardHeader(
               name: name,
               title: title,
@@ -592,6 +594,7 @@ class _TrainerCard extends StatelessWidget {
               interests: interests,
               profileImage: profileImage,
             ),
+
             const Spacer(),
             const _CardDivider(label: 'LANGUAGES & TECHNOLOGIES'),
             _BadgeRow(badges: badges),
@@ -865,8 +868,8 @@ class _CardHeader extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              _TapToFlip(),
-              const SizedBox(height: 10),
+              // _TapToFlip(),
+              // const SizedBox(height: 10),
               _ProfileAvatar(image: profileImage),
             ],
           ),
