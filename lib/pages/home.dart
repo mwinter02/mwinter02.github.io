@@ -23,6 +23,21 @@ class _HomePageState extends DynamicState<HomePage> {
   // Show only the first 6 projects on the home page.
   static const int _featuredCount = 6;
 
+  // One ScrollController drives both the page scroll and the nav anchors.
+  final ScrollController _scrollController = ScrollController();
+
+  // Section keys — attached to the first widget in each section so
+  // Scrollable.ensureVisible can find and scroll to them.
+  final GlobalKey _projectsKey = GlobalKey();
+  final GlobalKey _aboutKey    = GlobalKey();
+  final GlobalKey _contactKey  = GlobalKey();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   List<Project> get _featured => Projects.all.take(_featuredCount).toList();
 
   @override
@@ -33,8 +48,17 @@ class _HomePageState extends DynamicState<HomePage> {
 
   Widget _buildPage(BuildContext context) {
     return Scaffold(
-      appBar: siteAppBar(context),
+      appBar: siteAppBar(
+        context,
+        nav: HomeNav(
+          scrollController: _scrollController,
+          projectsKey: _projectsKey,
+          aboutKey:    _aboutKey,
+          contactKey:  _contactKey,
+        ),
+      ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -42,53 +66,54 @@ class _HomePageState extends DynamicState<HomePage> {
             const Center(child: ProfileCard()),
 
             // ── Accent divider ─────────────────────────────────────────────
-            Container(
-              height: 1.5,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.transparent,
-                    ThemeColors.appBarAccent,
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
+            _accentDivider(),
 
-            // ── Featured projects (no filter bar on home page) ─────────────
+            // ── Featured projects ──────────────────────────────────────────
+            // Key on a zero-height SizedBox so the anchor sits at the very
+            // top of the section without affecting layout.
+            SizedBox(key: _projectsKey, height: 0),
             ProjectGallery(
               projects: _featured,
               showFilters: false,
               showHeader: true,
             ),
 
-            // ── "View all projects" button ─────────────────────────────
+            // ── View all button ────────────────────────────────────────────
             _ViewAllButton(),
 
-            // ── Divider ────────────────────────────────────────────────────
-            Container(
-              height: 1.5,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.transparent,
-                    ThemeColors.appBarAccent,
-                    Colors.transparent,
-                  ],
-                ),
-              ),
+            // ── Accent divider ─────────────────────────────────────────────
+            _accentDivider(),
+
+            // ── About + Contact (dossier) ──────────────────────────────────
+            SizedBox(key: _aboutKey, height: 0),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+              child: const AboutSection(),
             ),
 
-            // ── About section ──────────────────────────────────────────────
-            const Padding(
-              padding: EdgeInsets.fromLTRB(24, 28, 24, 48),
-              child: AboutSection(),
-            ),
+            // The KnownProfilesPanel inside AboutSection contains the contact
+            // panel; we attach _contactKey to a zero-height anchor just above
+            // the bottom padding so CONTACT scrolls to the profile panel.
+            SizedBox(key: _contactKey, height: 0),
+            const SizedBox(height: 48),
           ],
         ),
       ),
     );
   }
+
+  Widget _accentDivider() => Container(
+        height: 1.5,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.transparent,
+              ThemeColors.appBarAccent,
+              Colors.transparent,
+            ],
+          ),
+        ),
+      );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

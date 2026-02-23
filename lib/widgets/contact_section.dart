@@ -27,7 +27,7 @@ import '../theme/theme.dart';
 const String _emailDisplay   = 'marcuswinter2002@gmail.com';
 const String _emailRedacted  = 'm█████████████@gmail.com';
 const String _linkedInHandle = '/in/mwinter02';
-const String _cvAssetPath    = 'assets/cv.pdf'; // swap when ready
+const String _cvAssetPath    = 'assets/Resume - Marcus Winter.pdf';
 
 class KnownProfilesPanel extends StatelessWidget {
   const KnownProfilesPanel({super.key});
@@ -328,22 +328,25 @@ class _EmailChannelState extends State<_EmailChannel> {
           valueWidget: Row(
             children: [
               // Redacted ↔ revealed text
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 220),
-                child: Text(
-                  _hovered || _copied ? _emailDisplay : _emailRedacted,
-                  key: ValueKey(_hovered || _copied),
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 13,
-                    color: _hovered
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.45),
-                    letterSpacing: 0.5,
+              Flexible(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  child: Text(
+                    _hovered || _copied ? _emailDisplay : _emailRedacted,
+                    key: ValueKey(_hovered || _copied),
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 13,
+                      color: _hovered
+                          ? Colors.white
+                          : Colors.white.withValues(alpha: 0.45),
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 12),
-              // Action pill
+              // Action pill — fixed size, never shrinks
               AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
                 padding: const EdgeInsets.symmetric(
@@ -415,12 +418,15 @@ class _LinkedInChannelState extends State<_LinkedInChannel> {
           accentColor: const Color(0xFF0A66C2),
           valueWidget: Row(
             children: [
-              Text(
-                _linkedInHandle,
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 13,
-                  color: _hovered ? Colors.white : Colors.white.withValues(alpha: 0.55),
-                  letterSpacing: 0.5,
+              Flexible(
+                child: Text(
+                  _linkedInHandle,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 13,
+                    color: _hovered ? Colors.white : Colors.white.withValues(alpha: 0.55),
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -482,16 +488,19 @@ class _CvChannelState extends State<_CvChannel> {
         onTap: () => launchUrl(Uri.parse(_cvAssetPath)),
         child: _ChannelRow(
           icon: Icons.file_download_outlined,
-          label: 'CURRICULUM VITAE',
+          label: 'RESUME',
           accentColor: const Color(0xFFFFD600),
           valueWidget: Row(
             children: [
-              Text(
-                'cv_marcus_winter.pdf',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 13,
-                  color: _hovered ? Colors.white : Colors.white.withValues(alpha: 0.55),
-                  letterSpacing: 0.5,
+              Flexible(
+                child: Text(
+                  'resume_marcus_winter.pdf',
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 13,
+                    color: _hovered ? Colors.white : Colors.white.withValues(alpha: 0.55),
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -511,7 +520,7 @@ class _CvChannelState extends State<_CvChannel> {
                   ),
                 ),
                 child: Text(
-                  'REQUEST DOSSIER',
+                  'REQUEST RESUME',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 9,
                     letterSpacing: 1.5,
@@ -531,6 +540,8 @@ class _CvChannelState extends State<_CvChannel> {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // _ChannelRow — shared layout for each contact entry
+// On wide screens: icon | label | value+pill on one line.
+// On narrow screens: icon + label on line 1, value+pill on line 2.
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ChannelRow extends StatelessWidget {
@@ -548,40 +559,62 @@ class _ChannelRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Accent icon
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: accentColor.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-              color: accentColor.withValues(alpha: 0.25),
-              width: 1,
-            ),
-          ),
-          child: Icon(icon, size: 15, color: accentColor.withValues(alpha: 0.8)),
-        ),
-        const SizedBox(width: 14),
-        // Label column
-        SizedBox(
-          width: 130,
-          child: Text(
-            label,
-            style: GoogleFonts.electrolize(
-              fontSize: 9,
-              color: Colors.white30,
-              letterSpacing: 2.5,
-            ),
+    return LayoutBuilder(builder: (context, constraints) {
+      final narrow = constraints.maxWidth < 480;
+
+      final iconBox = Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: accentColor.withValues(alpha: 0.10),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: accentColor.withValues(alpha: 0.25),
+            width: 1,
           ),
         ),
-        // Value + action
-        Expanded(child: valueWidget),
-      ],
-    );
+        child: Icon(icon, size: 15, color: accentColor.withValues(alpha: 0.8)),
+      );
+
+      final labelText = Text(
+        label,
+        style: GoogleFonts.electrolize(
+          fontSize: 9,
+          color: Colors.white30,
+          letterSpacing: 2.5,
+        ),
+      );
+
+      if (narrow) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Line 1: icon + label
+            Row(
+              children: [
+                iconBox,
+                const SizedBox(width: 10),
+                labelText,
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Line 2: value + pill, allowed to use full width
+            valueWidget,
+          ],
+        );
+      }
+
+      // Wide: single row
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          iconBox,
+          const SizedBox(width: 14),
+          SizedBox(width: 130, child: labelText),
+          Expanded(child: valueWidget),
+        ],
+      );
+    });
   }
 }
 
@@ -596,39 +629,58 @@ class _ClearanceFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: Row(
-        children: [
-          Text(
-            'CLEARANCE LEVEL: OPEN',
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 9,
-              color: Colors.white.withValues(alpha: 0.15),
-              letterSpacing: 2,
-            ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 480;
+        final clearance = Text(
+          'CLEARANCE LEVEL: OPEN',
+          style: GoogleFonts.jetBrainsMono(
+            fontSize: 9,
+            color: Colors.white.withValues(alpha: 0.15),
+            letterSpacing: 2,
           ),
-          const SizedBox(width: 24),
-          Container(width: 1, height: 10, color: Colors.white12),
-          const SizedBox(width: 24),
-          Text(
-            'STATUS: AVAILABLE FOR HIRE',
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 9,
-              color: const Color(0xFF00E676).withValues(alpha: 0.4),
-              letterSpacing: 2,
-            ),
+        );
+        final status = Text(
+          'STATUS: AVAILABLE FOR HIRE',
+          style: GoogleFonts.jetBrainsMono(
+            fontSize: 9,
+            color: const Color(0xFF00E676).withValues(alpha: 0.4),
+            letterSpacing: 2,
           ),
-          const Spacer(),
-          Text(
-            'FILE REF: MW-2026',
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 9,
-              color: Colors.white12,
-              letterSpacing: 2,
-            ),
+        );
+        final fileRef = Text(
+          'FILE REF: MW-2026',
+          style: GoogleFonts.jetBrainsMono(
+            fontSize: 9,
+            color: Colors.white12,
+            letterSpacing: 2,
           ),
-        ],
-      ),
+        );
+
+        if (narrow) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              clearance,
+              const SizedBox(height: 4),
+              status,
+              const SizedBox(height: 4),
+              fileRef,
+            ],
+          );
+        }
+
+        return Row(
+          children: [
+            clearance,
+            const SizedBox(width: 24),
+            Container(width: 1, height: 10, color: Colors.white12),
+            const SizedBox(width: 24),
+            status,
+            const Spacer(),
+            fileRef,
+          ],
+        );
+      }),
     );
   }
 }
-
