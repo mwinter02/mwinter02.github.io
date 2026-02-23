@@ -326,25 +326,30 @@ class _PhotoEntry {
 
 // ── Add / remove photos here. Rotations are assigned automatically. ──────────
 const _photos = [
+  // _PhotoEntry(
+  //   assetPath: 'assets/images/profile_picture.png',
+  //   caption: 'Marcus Winter',
+  //   sub: 'Wanted',
+  // ),
   _PhotoEntry(
-    assetPath: 'assets/images/profile_picture.png',
-    caption: 'Marcus Winter',
-    sub: 'Wanted',
+    assetPath: 'assets/images/fish.jpg',
+    caption: 'Spearfishing',
+    sub: 'New Zealand',
   ),
   _PhotoEntry(
-    assetPath: 'assets/images/pic1.jpg',
-    caption: 'Marcus Winter',
-    sub: 'Available for work',
+    assetPath: 'assets/images/pink.jpg',
+    caption: 'Training camp',
+    sub: 'Florida',
   ),
   _PhotoEntry(
-    assetPath: 'assets/images/pic2.jpg', // replace with photo 2
-    caption: 'On the pitch',
-    sub: 'Sundays, always',
+    assetPath: 'assets/images/tahoe.jpg',
+    caption: 'Lake Tahoe',
+    sub: 'California',
   ),
   _PhotoEntry(
-    assetPath: 'assets/images/pic3.jpg', // replace with photo 3
-    caption: 'Providence, RI',
-    sub: 'Home base',
+    assetPath: 'assets/images/row.jpg',
+    caption: 'Race day',
+    sub: 'Rhode Island',
   ),
 ];
 

@@ -452,18 +452,12 @@ class _FlippableCardState extends DynamicState<_FlippableCard>
     _wasMobile = isMobile;
     // Snap the flip to the front face immediately (no animation).
     _ctrl.value = 0;
-    // Invalidate the cached mobile height — it must be re-measured because
-    // the available width has changed.
-    _mobileCardHeight = null;
   }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < kMobileBreakpoint;
-
-    // Must come before any widget is built — resets flip + measurement
-    // if the layout mode has changed since the last frame.
     _handleModeChange(isMobile);
 
     return MouseRegion(
@@ -477,7 +471,7 @@ class _FlippableCardState extends DynamicState<_FlippableCard>
     );
   }
 
-  // Desktop flip — unchanged, both faces are in a fixed-height FittedBox.
+  // Desktop flip — unchanged.
   Widget _buildDesktopFlip(BuildContext context) {
     return AnimatedBuilder(
       animation: _angle,
@@ -495,62 +489,34 @@ class _FlippableCardState extends DynamicState<_FlippableCard>
     );
   }
 
-  // Mobile flip — lock both faces to the same height by:
-  //   1. Measuring the front face height with a LayoutBuilder.
-  //   2. Caching it in _mobileCardHeight once known.
-  //   3. Wrapping both faces in a SizedBox of that height.
-  //   4. The back face bio scrolls inside the fixed height — no overflow.
-  double? _mobileCardHeight;
-
+  // Mobile flip — IndexedStack sizes to the tallest face and keeps both
+  // laid out at all times, so the card height never changes during the flip.
   Widget _buildMobileFlip(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final availableWidth = constraints.maxWidth;
+    final front = mobileView(context);
+    final back  = _TrainerCardBack(name: widget.name, title: widget.title);
 
-        // Phase 1: measure the front face at the actual available width.
-        if (_mobileCardHeight == null) {
-          return _MeasureWidget(
-            // Constrain to the real width so Wrap reflows correctly.
-            child: SizedBox(width: availableWidth, child: mobileView(context)),
-            onMeasured: (size) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) setState(() => _mobileCardHeight = size.height);
-              });
-            },
-          );
-        }
+    return AnimatedBuilder(
+      animation: _angle,
+      builder: (context, _) {
+        final showBack = _ctrl.value >= 0.5;
+        final faceAngle = showBack ? _angle.value - pi : _angle.value;
 
-        // Phase 2: height is known — lock both faces to it.
-        final h = _mobileCardHeight!;
-        return SizedBox(
-          height: h,
-          child: AnimatedBuilder(
-            animation: _angle,
-            builder: (context, _) {
-              final showBack = _ctrl.value >= 0.5;
-              final faceAngle = showBack ? _angle.value - pi : _angle.value;
-              return Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateY(faceAngle),
-                child: SizedBox(
-                  height: h,
-                  child: showBack
-                      ? _TrainerCardBack(
-                          name: widget.name,
-                          title: widget.title,
-                          fixedHeight: h,
-                        )
-                      : mobileView(context),
-                ),
-              );
-            },
+        return Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateY(faceAngle),
+          // IndexedStack keeps both children laid out (so height = max of both)
+          // but only paints the active index.
+          child: IndexedStack(
+            index: showBack ? 1 : 0,
+            children: [front, back],
           ),
         );
       },
     );
   }
+
 
   Widget _backFace() =>
       _TrainerCardBack(name: widget.name, title: widget.title);
@@ -578,41 +544,6 @@ class _FlippableCardState extends DynamicState<_FlippableCard>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// _MeasureWidget — renders a child invisibly to obtain its natural size,
-// then calls onMeasured once. Used to lock the mobile card height before
-// the flip animation begins.
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _MeasureWidget extends StatefulWidget {
-  final Widget child;
-  final void Function(Size) onMeasured;
-
-  const _MeasureWidget({required this.child, required this.onMeasured});
-
-  @override
-  State<_MeasureWidget> createState() => _MeasureWidgetState();
-}
-
-class _MeasureWidgetState extends State<_MeasureWidget> {
-  final _key = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final box = _key.currentContext?.findRenderObject() as RenderBox?;
-      if (box != null && box.hasSize) {
-        widget.onMeasured(box.size);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return KeyedSubtree(key: _key, child: widget.child);
-  }
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // _TrainerCard  (the visual card shell)
@@ -691,10 +622,6 @@ class _TrainerCardBack extends StatelessWidget {
   final String name;
   final String title;
 
-  /// When provided (mobile flip), the card is locked to this height and the
-  /// bio becomes scrollable so it never overflows.
-  final double? fixedHeight;
-
   static const String _bio =
       "I'm a software engineer with a passion for building things that sit at "
       'the intersection of performance and creativity — from physics simulations '
@@ -703,33 +630,24 @@ class _TrainerCardBack extends StatelessWidget {
       'modern web development with Flutter & Dart. I enjoy the challenge of '
       'translating complex technical problems into clean, maintainable code.\n\n';
 
-  static const List<_StatItem> _stats = [
-    // _StatItem(label: 'YEARS CODING', value: '8+'),
-    // _StatItem(label: 'PROJECTS SHIPPED', value: '20+'),
-    // _StatItem(label: 'CUPS OF COFFEE', value: '∞'),
-  ];
+  static const List<_StatItem> _stats = [];
 
   const _TrainerCardBack({
     required this.name,
     required this.title,
-    this.fixedHeight,
   });
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Treat as height-bounded if either the parent gave a bounded height
-        // (desktop FittedBox) or a fixedHeight was passed explicitly (mobile).
-        final effectiveHeight =
-            fixedHeight ??
-            (constraints.hasBoundedHeight ? constraints.maxHeight : null);
-        final bounded = effectiveHeight != null;
+        final bounded = constraints.hasBoundedHeight;
+        final height = bounded ? constraints.maxHeight : null;
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Container(
-            height: effectiveHeight,
+            height: height,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF311B92), Color(0xFF1A0533)],

@@ -32,9 +32,9 @@ Currently playing: Pokemon Emerald
 #### UI
 - ~~Projects Tab too large on mobile~~
 - ~~Tags scrolling issue on mobile, also on desktop causes accidental reloading~~
-- Back button when clicking on project, also on mobile
+- ~~Back button when clicking on project, also on mobile~~
 - Profile card Bio
-- Profile card badges against border on mobile
+- ~~Profile card badges against border on mobile~~
 - HTML extend safe area beneath search bar on mobile
 - ~~About section beneath projects~~
 - About section content

@@ -63,8 +63,7 @@ class BreadcrumbNav extends NavConfig {
 class NoNav extends NavConfig { const NoNav(); }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// siteAppBar — nav parameter kept for backwards compatibility but ignored;
-// the unified nav bar is always shown.
+// siteAppBar
 // ─────────────────────────────────────────────────────────────────────────────
 
 AppBar siteAppBar(BuildContext context, {NavConfig nav = const NoNav()}) {
@@ -75,32 +74,35 @@ AppBar siteAppBar(BuildContext context, {NavConfig nav = const NoNav()}) {
     automaticallyImplyLeading: false,
     title: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: [
-          // ── Logo ──────────────────────────────────────────────────────────
-          TextButton(
-            onPressed: () => context.go(Routes.home.path),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'mwinter02',
-                style: AppTextTheme.display.copyWith(color: Colors.white),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 580;
+        return Row(
+          children: [
+            // ── Logo — capped width on narrow screens so it never crowds ───
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: narrow ? constraints.maxWidth/2 : double.infinity),
+              child: TextButton(
+                onPressed: () => context.go(Routes.home.path),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'mwinter02',
+                    style: AppTextTheme.display,
+                  ),
+                ),
               ),
             ),
-          ),
-          // ── Centre nav — always present ────────────────────────────────
-          Expanded(child: _SiteNavLinks()),
-          // ── Social icons — always present ─────────────────────────────────
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _linkedInButton(context),
-              _emailButton(context),
-            ],
-          ),
-        ],
-      ),
+            // ── Centre nav — horizontal links, hidden on narrow screens ───
+            Expanded(child: _SiteNavLinks()),
+            // ── Social icons — always present ─────────────────────────────
+            _linkedInButton(context),
+            _emailButton(context),
+            // ── Hamburger — right of email, only on narrow screens ────────
+            if (narrow) _HamburgerMenu(),
+          ],
+        );
+      }),
     ),
   );
 }
@@ -149,13 +151,8 @@ class _SiteNavLinks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      // Below 580px switch to hamburger so links don't crowd the social icons.
-      if (constraints.maxWidth < 580) {
-        return Align(
-          alignment: Alignment.centerRight,
-          child: _HamburgerMenu(),
-        );
-      }
+      // Hidden on narrow screens — hamburger takes over.
+      if (constraints.maxWidth < 580) return const SizedBox.shrink();
       final items = _navItems(context);
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -262,8 +259,8 @@ class _HamburgerMenuState extends State<_HamburgerMenu>
             child: Icon(
               _open ? Icons.close_rounded : Icons.menu_rounded,
               key: ValueKey(_open),
-              color: Colors.white70,
-              size: 26,
+              color: Colors.white,
+              size: 42,
             ),
           ),
         ),
@@ -311,49 +308,54 @@ class _DropdownOverlay extends StatelessWidget {
             opacity: fade,
             child: SlideTransition(
               position: slide,
-              child: Container(
-                width: 200,
-                margin: const EdgeInsets.only(top: 4, right: 12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0E0E1A),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: ThemeColors.appBarAccent.withValues(alpha: 0.25),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.55),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
+              // Material resets DefaultTextStyle so the Overlay context
+              // doesn't inherit the browser's default yellow underline.
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  width: 200,
+                  margin: const EdgeInsets.only(top: 4, right: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0E0E1A),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: ThemeColors.appBarAccent.withValues(alpha: 0.25),
+                      width: 1,
                     ),
-                    BoxShadow(
-                      color: ThemeColors.appBarAccent.withValues(alpha: 0.08),
-                      blurRadius: 32,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (var i = 0; i < items.length; i++) ...[
-                      _DropdownItem(
-                        label: items[i].label,
-                        onTap: () {
-                          onClose();
-                          items[i].onTap();
-                        },
-                        isFirst: i == 0,
-                        isLast: i == items.length - 1,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
                       ),
-                      if (i < items.length - 1)
-                        Container(
-                          height: 1,
-                          margin: const EdgeInsets.symmetric(horizontal: 16),
-                          color: Colors.white.withValues(alpha: 0.05),
-                        ),
+                      BoxShadow(
+                        color: ThemeColors.appBarAccent.withValues(alpha: 0.08),
+                        blurRadius: 32,
+                      ),
                     ],
-                  ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (var i = 0; i < items.length; i++) ...[
+                        _DropdownItem(
+                          label: items[i].label,
+                          onTap: () {
+                            onClose();
+                            items[i].onTap();
+                          },
+                          isFirst: i == 0,
+                          isLast: i == items.length - 1,
+                        ),
+                        if (i < items.length - 1)
+                          Container(
+                            height: 1,
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                            color: Colors.white.withValues(alpha: 0.05),
+                          ),
+                      ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -413,12 +415,9 @@ class _DropdownItemState extends State<_DropdownItem> {
             children: [
               Text(
                 widget.label,
-                style: TextStyle(
-                  fontFamily: 'Electrolize',
-                  fontSize: 12,
-                  letterSpacing: 2.5,
-                  color: _hovered ? Colors.white : Colors.white60,
-                  fontWeight: _hovered ? FontWeight.w600 : FontWeight.normal,
+                style: AppTextTheme.labelMenuItem.copyWith(
+                  color: _hovered ? AppTextColors.bright : AppTextColors.secondary,
+                  fontWeight: _hovered ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
               const Spacer(),
@@ -471,12 +470,9 @@ class _NavLinkState extends State<_NavLink> {
             children: [
               Text(
                 widget.label,
-                style: TextStyle(
-                  fontFamily: 'Electrolize',
-                  fontSize: 11,
-                  letterSpacing: 2,
-                  color: _hovered ? Colors.white : Colors.white54,
-                  fontWeight: _hovered ? FontWeight.w600 : FontWeight.normal,
+                style: AppTextTheme.labelNav.copyWith(
+                  color: _hovered ? AppTextColors.bright : AppTextColors.secondary,
+                  fontWeight: _hovered ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
               const SizedBox(height: 3),
@@ -627,4 +623,3 @@ class Separator extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 12),
         color: Colors.white.withValues(alpha: 0.05),
       );
-}
