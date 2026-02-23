@@ -1,6 +1,7 @@
 import 'package:google_fonts/google_fonts.dart';
 import '../router.dart';
 import '../theme/theme.dart';
+import '../widgets/about_section.dart';
 import '../widgets/dynamic_widget.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/project_gallery.dart';
@@ -58,10 +59,31 @@ class _HomePageState extends DynamicState<HomePage> {
             ProjectGallery(
               projects: _featured,
               showFilters: false,
+              showHeader: true,
             ),
 
-            // ── "View all projects" button ──────────────────────────────────
+            // ── "View all projects" button ─────────────────────────────
             _ViewAllButton(),
+
+            // ── Divider ────────────────────────────────────────────────────
+            Container(
+              height: 1.5,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    ThemeColors.appBarAccent,
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+
+            // ── About section ──────────────────────────────────────────────
+            const Padding(
+              padding: EdgeInsets.fromLTRB(24, 28, 24, 48),
+              child: AboutSection(),
+            ),
           ],
         ),
       ),

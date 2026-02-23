@@ -62,10 +62,74 @@ class _ProjectGalleryState extends State<ProjectGallery> {
               onTagSelected: (tag) => setState(() => _activeTag = tag),
             ),
             const SizedBox(height: 24),
+          ] else if (widget.showHeader) ...[
+            const _FeaturedProjectsHeader(),
+            const SizedBox(height: 24),
           ],
           ProjectGrid(projects: _filtered),
         ],
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _FeaturedProjectsHeader — used on the home page where filters are hidden
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _FeaturedProjectsHeader extends StatelessWidget {
+  const _FeaturedProjectsHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Left accent rule
+        Container(
+          width: 3,
+          height: 48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(2),
+            gradient: const LinearGradient(
+              colors: [ThemeColors.appBarAccent, Colors.transparent],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [Colors.white, Colors.white54],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds),
+              child: Text(
+                'FEATURED PROJECTS',
+                style: GoogleFonts.michroma(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 5,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'A selection of recent work',
+              style: GoogleFonts.electrolize(
+                fontSize: 12,
+                color: Colors.white38,
+                letterSpacing: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
