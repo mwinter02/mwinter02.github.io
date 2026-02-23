@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../router.dart';
 import '../theme/theme.dart';
@@ -23,14 +24,8 @@ class _HomePageState extends DynamicState<HomePage> {
   // Show only the first 6 projects on the home page.
   static const int _featuredCount = 6;
 
-  // One ScrollController drives both the page scroll and the nav anchors.
+  // One ScrollController drives the page scroll.
   final ScrollController _scrollController = ScrollController();
-
-  // Section keys — attached to the first widget in each section so
-  // Scrollable.ensureVisible can find and scroll to them.
-  final GlobalKey _projectsKey = GlobalKey();
-  final GlobalKey _aboutKey    = GlobalKey();
-  final GlobalKey _contactKey  = GlobalKey();
 
   @override
   void dispose() {
@@ -48,55 +43,49 @@ class _HomePageState extends DynamicState<HomePage> {
 
   Widget _buildPage(BuildContext context) {
     return Scaffold(
-      appBar: siteAppBar(
-        context,
-        nav: HomeNav(
-          scrollController: _scrollController,
-          projectsKey: _projectsKey,
-          aboutKey:    _aboutKey,
-          contactKey:  _contactKey,
-        ),
-      ),
+      appBar: siteAppBar(context),
       body: SingleChildScrollView(
         controller: _scrollController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Profile card ───────────────────────────────────────────────
-            const Center(child: ProfileCard()),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: kGridMaxWidth),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Scroll-to-top anchor ─────────────────────────────────
+                SizedBox(key: HomeScrollKeys.top, height: 0),
 
-            // ── Accent divider ─────────────────────────────────────────────
-            _accentDivider(),
+                // ── Profile card ─────────────────────────────────────────
+                const Center(child: ProfileCard()),
 
-            // ── Featured projects ──────────────────────────────────────────
-            // Key on a zero-height SizedBox so the anchor sits at the very
-            // top of the section without affecting layout.
-            SizedBox(key: _projectsKey, height: 0),
-            ProjectGallery(
-              projects: _featured,
-              showFilters: false,
-              showHeader: true,
+                // ── Accent divider ───────────────────────────────────────
+                _accentDivider(),
+
+                // ── Featured projects ────────────────────────────────────
+                ProjectGallery(
+                  projects: _featured,
+                  showFilters: false,
+                  showHeader: true,
+                ),
+
+                // ── View all button ──────────────────────────────────────
+                _ViewAllButton(),
+
+                // ── Accent divider ───────────────────────────────────────
+                _accentDivider(),
+
+                // ── About + Contact (dossier) ────────────────────────────
+                SizedBox(key: HomeScrollKeys.about, height: 0),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(24, 28, 24, 0),
+                  child: AboutSection(),
+                ),
+
+                SizedBox(key: HomeScrollKeys.contact, height: 0),
+                const SizedBox(height: 48),
+              ],
             ),
-
-            // ── View all button ────────────────────────────────────────────
-            _ViewAllButton(),
-
-            // ── Accent divider ─────────────────────────────────────────────
-            _accentDivider(),
-
-            // ── About + Contact (dossier) ──────────────────────────────────
-            SizedBox(key: _aboutKey, height: 0),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
-              child: const AboutSection(),
-            ),
-
-            // The KnownProfilesPanel inside AboutSection contains the contact
-            // panel; we attach _contactKey to a zero-height anchor just above
-            // the bottom padding so CONTACT scrolls to the profile panel.
-            SizedBox(key: _contactKey, height: 0),
-            const SizedBox(height: 48),
-          ],
+          ),
         ),
       ),
     );

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../links.dart';
 import '../theme/theme.dart';
+import 'site_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // KnownProfilesPanel
@@ -25,8 +26,7 @@ import '../theme/theme.dart';
 
 // ── Tune these to match your details ────────────────────────────────────────
 const String _emailDisplay   = 'marcuswinter2002@gmail.com';
-const String _emailRedacted  = 'm█████████████@gmail.com';
-const String _linkedInHandle = '/in/mwinter02';
+const String _linkedInHandle = 'linkedin.com/in/mwinter02';
 const String _cvAssetPath    = 'assets/Resume - Marcus Winter.pdf';
 
 class KnownProfilesPanel extends StatelessWidget {
@@ -108,7 +108,7 @@ class _HeaderBar extends StatelessWidget {
                 ),
               ),
               Text(
-                'KNOWN_PROFILES',
+                'CONTACT_DETAILS',
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 13,
                   color: ThemeColors.appBarAccent,
@@ -230,9 +230,8 @@ class _SubjectStamp extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // Availability stamp — rotated, semi-transparent
-          Transform.rotate(
-            angle: -0.18,
-            child: Container(
+         Container(
+           alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 border: Border.all(
@@ -251,7 +250,7 @@ class _SubjectStamp extends StatelessWidget {
                 ),
               ),
             ),
-          ),
+
         ],
       ),
     );
@@ -267,29 +266,20 @@ class _ChannelList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
+      children: [
         _EmailChannel(),
-        _Separator(),
+        Separator(),
         _LinkedInChannel(),
-        _Separator(),
+        Separator(),
         _CvChannel(),
       ],
     );
   }
 }
 
-class _Separator extends StatelessWidget {
-  const _Separator();
 
-  @override
-  Widget build(BuildContext context) => Container(
-        height: 1,
-        margin: const EdgeInsets.symmetric(vertical: 12),
-        color: Colors.white.withValues(alpha: 0.05),
-      );
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // _EmailChannel — redacted by default, hover to reveal, tap to copy
@@ -332,7 +322,7 @@ class _EmailChannelState extends State<_EmailChannel> {
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 220),
                   child: Text(
-                    _hovered || _copied ? _emailDisplay : _emailRedacted,
+                    _emailDisplay,
                     key: ValueKey(_hovered || _copied),
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.jetBrainsMono(
@@ -370,7 +360,7 @@ class _EmailChannelState extends State<_EmailChannel> {
                   ),
                 ),
                 child: Text(
-                  _copied ? 'COPIED //' : 'DECLASSIFY',
+                  _copied ? 'COPIED //' : 'COPY',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 9,
                     letterSpacing: 1.5,
@@ -446,7 +436,7 @@ class _LinkedInChannelState extends State<_LinkedInChannel> {
                   ),
                 ),
                 child: Text(
-                  'OPEN CHANNEL',
+                  'CONNECT',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 9,
                     letterSpacing: 1.5,
@@ -520,7 +510,7 @@ class _CvChannelState extends State<_CvChannel> {
                   ),
                 ),
                 child: Text(
-                  'REQUEST RESUME',
+                  'DOWNLOAD',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 9,
                     letterSpacing: 1.5,
@@ -631,14 +621,6 @@ class _ClearanceFooter extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: LayoutBuilder(builder: (context, constraints) {
         final narrow = constraints.maxWidth < 480;
-        final clearance = Text(
-          'CLEARANCE LEVEL: OPEN',
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 9,
-            color: Colors.white.withValues(alpha: 0.15),
-            letterSpacing: 2,
-          ),
-        );
         final status = Text(
           'STATUS: AVAILABLE FOR HIRE',
           style: GoogleFonts.jetBrainsMono(
@@ -657,13 +639,11 @@ class _ClearanceFooter extends StatelessWidget {
         );
 
         if (narrow) {
-          return Column(
+          return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              clearance,
-              const SizedBox(height: 4),
               status,
-              const SizedBox(height: 4),
+              const Spacer(),
               fileRef,
             ],
           );
@@ -671,10 +651,6 @@ class _ClearanceFooter extends StatelessWidget {
 
         return Row(
           children: [
-            clearance,
-            const SizedBox(width: 24),
-            Container(width: 1, height: 10, color: Colors.white12),
-            const SizedBox(width: 24),
             status,
             const Spacer(),
             fileRef,

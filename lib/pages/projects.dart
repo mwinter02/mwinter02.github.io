@@ -117,10 +117,7 @@ class ProjectsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: siteAppBar(
-        context,
-        nav: const BreadcrumbNav(label: 'HOME', route: '/'),
-      ),
+      appBar: siteAppBar(context),
       body: SingleChildScrollView(
         child: ProjectGallery(
           projects: Projects.all,

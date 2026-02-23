@@ -166,109 +166,120 @@ class _MobileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      // Scale factor: 1.0 at reference width, shrinks proportionally below it.
-      final s = (constraints.maxWidth / _referenceWidth).clamp(0.6, 1.2);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Scale factor: 1.0 at reference width, shrinks proportionally below it.
+        final s = (constraints.maxWidth / _referenceWidth).clamp(0.6, 1.2);
 
-      return Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF1A0533), Color(0xFF311B92)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.deepPurple.withValues(alpha: 0.55),
-              blurRadius: 32,
-              spreadRadius: 2,
-              offset: const Offset(0, 8),
+        return Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1A0533), Color(0xFF311B92)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 24 * s),
-            // ── Avatar ────────────────────────────────────────────────────
-            _ScaledProfileAvatar(image: profileImage, scale: s),
-            SizedBox(height: 16 * s),
-            // ── Name + title chip ─────────────────────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20 * s),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    name,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.michroma(
-                      fontSize: 20 * s,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1.4,
-                    ),
-                  ),
-                  SizedBox(height: 6 * s),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10 * s,
-                      vertical: 3 * s,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurpleAccent.withValues(alpha: 0.25),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.deepPurple.withValues(alpha: 0.55),
+                blurRadius: 32,
+                spreadRadius: 2,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 16 * s),
+              // ── Tap hint — top right ──────────────────────────────────────
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20 * s),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [_TapToFlip()],
+                ),
+              ),
+              SizedBox(height: 8 * s),
+              // ── Avatar ────────────────────────────────────────────────────
+              _ScaledProfileAvatar(image: profileImage, scale: s),
+              SizedBox(height: 16 * s),
+              // ── Name + title chip ─────────────────────────────────────────
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      name,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.michroma(
+                        fontSize: 20 * s,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 1.4,
                       ),
                     ),
-                    child: Text(
-                      title,
-                      style: GoogleFonts.electrolize(
-                        fontSize: 12 * s,
-                        color: Colors.deepPurpleAccent.shade100,
-                        letterSpacing: 1.2,
+                    SizedBox(height: 6 * s),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10 * s,
+                        vertical: 3 * s,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurpleAccent.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      child: Text(
+                        title,
+                        style: GoogleFonts.electrolize(
+                          fontSize: 12 * s,
+                          color: Colors.deepPurpleAccent.shade100,
+                          letterSpacing: 1.2,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 14 * s),
-            // ── Detail rows ───────────────────────────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20 * s),
-              child: Column(
-                children: [
-                  _ScaledDetailRow(
-                    icon: Icons.school_outlined,
-                    text: education,
-                    scale: s,
-                  ),
-                  SizedBox(height: 6 * s),
-                  _ScaledDetailRow(
-                    icon: Icons.interests_outlined,
-                    text: interests.join(' · '),
-                    scale: s,
-                  ),
-                ],
+              SizedBox(height: 14 * s),
+              // ── Detail rows ───────────────────────────────────────────────
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20 * s),
+                child: Column(
+                  children: [
+                    _ScaledDetailRow(
+                      icon: Icons.school_outlined,
+                      text: education,
+                      scale: s,
+                    ),
+                    SizedBox(height: 6 * s),
+                    _ScaledDetailRow(
+                      icon: Icons.interests_outlined,
+                      text: interests.join(' · '),
+                      scale: s,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 16 * s),
-            // ── Badge grid ────────────────────────────────────────────────
-            const _CardDivider(label: 'LANGUAGES & TECHNOLOGIES'),
-            _MobileBadgeGrid(badges: badges, scale: s),
-            SizedBox(height: 16 * s),
-          ],
-        ),
-      );
-    });
+              SizedBox(height: 16 * s),
+              // ── Badge grid ────────────────────────────────────────────────
+              const _CardDivider(label: 'LANGUAGES & TECHNOLOGIES'),
+              _MobileBadgeGrid(badges: badges, scale: s),
+              SizedBox(height: 16 * s),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -327,8 +338,7 @@ class _ScaledDetailRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon,
-            size: 16 * scale, color: Colors.deepPurpleAccent.shade100),
+        Icon(icon, size: 16 * scale, color: Colors.deepPurpleAccent.shade100),
         SizedBox(width: 8 * scale),
         Expanded(
           child: Text(
@@ -363,7 +373,9 @@ class _MobileBadgeGrid extends StatelessWidget {
         spacing: 10 * scale,
         runSpacing: 10 * scale,
         alignment: WrapAlignment.center,
-        children: badges.map((b) => LanguageBadge(data: b, scale: scale)).toList(),
+        children: badges
+            .map((b) => LanguageBadge(data: b, scale: scale))
+            .toList(),
       ),
     );
   }
@@ -625,43 +637,47 @@ class _TrainerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        // Deep purple gradient that echoes the site's colour scheme
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1A0533), Color(0xFF311B92)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.deepPurple.withValues(alpha: 0.55),
-            blurRadius: 32,
-            spreadRadius: 2,
-            offset: const Offset(0, 8),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF1A0533), Color(0xFF311B92)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          _CardHeader(
-            name: name,
-            title: title,
-            education: education,
-            interests: interests,
-            profileImage: profileImage,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+            width: 1.5,
           ),
-          const Spacer(),
-          const _CardDivider(label: 'LANGUAGES & TECHNOLOGIES'),
-          _BadgeRow(badges: badges),
-          const SizedBox(height: 18),
-        ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.deepPurple.withValues(alpha: 0.55),
+              blurRadius: 32,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            _CardHeader(
+              name: name,
+              title: title,
+              education: education,
+              interests: interests,
+              profileImage: profileImage,
+            ),
+            const Spacer(),
+            const _CardDivider(label: 'LANGUAGES & TECHNOLOGIES'),
+            _BadgeRow(badges: badges),
+            // Flexible spacer absorbs any sub-pixel rounding rather than
+            // reporting an overflow.
+            const Flexible(child: SizedBox(height: 18)),
+          ],
+        ),
       ),
     );
   }
@@ -710,29 +726,32 @@ class _TrainerCardBack extends StatelessWidget {
             (constraints.hasBoundedHeight ? constraints.maxHeight : null);
         final bounded = effectiveHeight != null;
 
-        return Container(
-          height: effectiveHeight,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF311B92), Color(0xFF1A0533)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.deepPurple.withValues(alpha: 0.55),
-                blurRadius: 32,
-                spreadRadius: 2,
-                offset: const Offset(0, 8),
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            height: effectiveHeight,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF311B92), Color(0xFF1A0533)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.deepPurple.withValues(alpha: 0.55),
+                  blurRadius: 32,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: bounded ? _boundedLayout() : _unboundedLayout(),
           ),
-          child: bounded ? _boundedLayout() : _unboundedLayout(),
         );
       },
     );
@@ -777,38 +796,40 @@ class _TrainerCardBack extends StatelessWidget {
   // ── Unbounded layout — fallback, content determines height ────────────────
 
   Widget _unboundedLayout() {
-    return LayoutBuilder(builder: (context, constraints) {
-      final s = (constraints.maxWidth / 360.0).clamp(0.6, 1.2);
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _header(),
-          SizedBox(height: 10 * s),
-          const _CardDivider(label: 'BIO'),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20 * s, 14 * s, 20 * s, 0),
-            child: Text(
-              _bio,
-              style: GoogleFonts.montserrat(
-                fontSize: 13 * s,
-                color: Colors.white70,
-                height: 1.65,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final s = (constraints.maxWidth / 360.0).clamp(0.6, 1.2);
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _header(),
+            SizedBox(height: 10 * s),
+            const _CardDivider(label: 'BIO'),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20 * s, 14 * s, 20 * s, 0),
+              child: Text(
+                _bio,
+                style: GoogleFonts.montserrat(
+                  fontSize: 13 * s,
+                  color: Colors.white70,
+                  height: 1.65,
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 16 * s),
-          const _CardDivider(label: 'AT A GLANCE'),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20 * s, 16 * s, 20 * s, 20 * s),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: _stats.map((s) => _StatBadge(item: s)).toList(),
+            SizedBox(height: 16 * s),
+            const _CardDivider(label: 'AT A GLANCE'),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20 * s, 16 * s, 20 * s, 20 * s),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: _stats.map((s) => _StatBadge(item: s)).toList(),
+              ),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 
   // ── Shared header ─────────────────────────────────────────────────────────
@@ -857,21 +878,7 @@ class _TrainerCardBack extends StatelessWidget {
               ],
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.touch_app_outlined, size: 13, color: Colors.white24),
-              const SizedBox(width: 4),
-              Text(
-                'TAP TO FLIP',
-                style: GoogleFonts.electrolize(
-                  fontSize: 10,
-                  color: Colors.white24,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ],
-          ),
+          _TapToFlip(),
         ],
       ),
     );
@@ -881,6 +888,27 @@ class _TrainerCardBack extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // _StatItem / _StatBadge  –  small "at a glance" numbers on the back face
 // ─────────────────────────────────────────────────────────────────────────────
+
+class _TapToFlip extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.touch_app_outlined, size: 13, color: Colors.white24),
+        const SizedBox(width: 4),
+        Text(
+          'TAP TO FLIP',
+          style: GoogleFonts.electrolize(
+            fontSize: 10,
+            color: Colors.white24,
+            letterSpacing: 1.5,
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class _StatItem {
   final String label;
@@ -947,8 +975,6 @@ class _CardHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ProfileAvatar(image: profileImage),
-          const SizedBox(width: 28),
           Expanded(
             child: _ProfileDetails(
               name: name,
@@ -956,6 +982,16 @@ class _CardHeader extends StatelessWidget {
               education: education,
               interests: interests,
             ),
+          ),
+          const SizedBox(width: 28),
+          // Right column: tap hint above the avatar
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              _TapToFlip(),
+              const SizedBox(height: 10),
+              _ProfileAvatar(image: profileImage),
+            ],
           ),
         ],
       ),
@@ -994,7 +1030,7 @@ class _ProfileAvatar extends StatelessWidget {
         ],
       ),
       child: CircleAvatar(
-        radius: 54,
+        radius: 80,
         backgroundImage: image,
         backgroundColor: const Color(0xFF1A0533),
       ),
@@ -1165,20 +1201,12 @@ class _BadgeRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Row(
-          children: badges
-              .map(
-                (b) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: LanguageBadge(data: b),
-                ),
-              )
-              .toList(),
-        ),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        alignment: WrapAlignment.center,
+        children: badges.map((b) => LanguageBadge(data: b)).toList(),
       ),
     );
   }
@@ -1214,7 +1242,9 @@ class _LanguageBadgeState extends State<LanguageBadge> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
-        width: 72 * s,
+        // Max width set by scale; never forced wider than available space.
+        constraints: BoxConstraints(maxWidth: 72 * s),
+        width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 10 * s),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -1262,14 +1292,17 @@ class _LanguageBadgeState extends State<LanguageBadge> {
                     ),
             ),
             SizedBox(height: 6 * s),
-            Text(
-              widget.data.label,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.electrolize(
-                fontSize: 11 * s,
-                color: _hovered ? Colors.white : Colors.white60,
-                letterSpacing: 0.8,
-                fontWeight: FontWeight.w600,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                widget.data.label,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.electrolize(
+                  fontSize: 11 * s,
+                  color: _hovered ? Colors.white : Colors.white60,
+                  letterSpacing: 0.8,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

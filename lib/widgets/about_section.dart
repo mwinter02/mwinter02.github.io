@@ -1,7 +1,9 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/theme.dart';
 import 'contact_section.dart';
 import 'dynamic_widget.dart';
+import 'site_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AboutSection
@@ -20,7 +22,6 @@ class AboutSection extends DynamicWidget {
 
   @override
   Widget desktopView(BuildContext context) {
-    // TODO: implement desktopView
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -114,33 +115,38 @@ class _DesktopLayout extends StatelessWidget {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── Three-column row ───────────────────────────────────────────────
+        // ── Two-column row: bio (2/3) | photo+stats (1/3) ─────────────────
         IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: _EntranceAnimation(
-                  direction: _EntranceDirection.left,
-                  delay: Duration.zero,
-                  child: _PhotoPanel(),
-                ),
-              ),
-              SizedBox(width: 20),
+              // Left — bio panel, 2/3 width
               Expanded(
                 flex: 2,
                 child: _EntranceAnimation(
-                  direction: _EntranceDirection.up,
-                  delay: Duration(milliseconds: 100),
+                  direction: _EntranceDirection.left,
+                  delay: Duration.zero,
                   child: _BioPanel(),
                 ),
               ),
               SizedBox(width: 20),
+              // Right — photo above stats, 1/3 width
               Expanded(
-                child: _EntranceAnimation(
-                  direction: _EntranceDirection.right,
-                  delay: Duration(milliseconds: 200),
-                  child: _StatsPanel(),
+                flex: 1,
+                child: Column(
+                  children: [
+                    _EntranceAnimation(
+                      direction: _EntranceDirection.right,
+                      delay: Duration(milliseconds: 100),
+                      child: _PhotoPanel(),
+                    ),
+                    SizedBox(height: 20),
+                    _EntranceAnimation(
+                      direction: _EntranceDirection.right,
+                      delay: Duration(milliseconds: 200),
+                      child: _StatsPanel(),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -676,30 +682,29 @@ class _BioPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _TerminalLabel('WHO_AM_I'),
+          Separator(),
           SizedBox(height: 14),
-          _BioText(
-            "I'm a software engineer based in Providence, RI. I got into "
-            'programming through game modding as a kid — tweaking Minecraft '
-            'configs led to writing Java plugins, which led to building full '
-            'game engines from scratch. That curiosity-driven approach still '
-            'defines how I work.',
-          ),
+          _BioText("""
+I'm a Master's student in Computer Science at Brown University in my final semester. Since I was a kid, understanding how things work at a fundamental level has always fascinated me. 
+I began my programming journey in Freshman year of University, and after my first course in object-oriented programming where we built a number of simple games, I was hooked.
+Since then, I've truly found my passion creating through code — whether it's a game engine, a full stack application, or a graphics renderer. I love the way programming combines creativity, problem-solving, and technical skill, and I'm always excited to take on new challenges that push me to grow as a developer.
+Most importantly, I love making things pretty AND functional. I have spent countless hours refining algorithms or tweaking visuals to get it just the way I want. I find the process deeply cathartic, and I think it shows in the final product when you genuinely care about every detail.
+            """),
           SizedBox(height: 20),
-          _TerminalLabel('BEYOND_THE_KEYBOARD'),
+          _TerminalLabel('KNOWN_ACTIVITIES'),
           SizedBox(height: 14),
-          _BioText(
-            'Outside of coding I spend most of my time on the football pitch, '
-            "hiking trails, or deep in a tabletop RPG campaign. I'm endlessly "
-            'fascinated by procedural generation — the idea that a handful of '
-            'rules can produce something that feels genuinely alive.',
-          ),
+          _BioText("""
+Outside of coding I spend most of my time wishing I was in the water. Growing up in coastal New Zealand, I was swimming before I could walk. Before I was 12, I already was a certified scuba diver and had speared my first dozen fish. Every summer I look forward to getting back in the water, whether it's diving for lobster, spearfishing for dinner, or just snorkeling and admiring what the ocean has to offer. 
+Going above the surface, I also spent the last 10 years rowing competitively. Most recently, I rowed Division 1 for Brown's Heavyweight Crew team. The combination of physical endurance, technical skill, discipline, and teamwork in rowing is truly unique. It's been an incredible way to push myself to my limit and have made lifelong friends in the process.
+In the fleeting moments when I have free time, I maintain my other life-long passion for gaming. From nostalgic childhood favorites like Pokemon Emerald and Minecraft, to deeply compelling titles like The Witcher 3 and the Red Dead Redemption 2, I love immersing myself in rich game worlds and engaging gameplay. Video games provide unparallel experiences, and have given me both deeply emotional and engaging stories and a creative outlet in more open ended titles.
+            """),
           SizedBox(height: 20),
-          _TerminalLabel('CURRENTLY'),
+          _TerminalLabel('CURRENT_STATUS'),
           SizedBox(height: 14),
-          _BioText(
-            'Finishing my M.Sc. at Brown, exploring real-time GI techniques, '
-            'and looking for roles where performance and creativity intersect.',
-          ),
+          _BioText('''
+Finishing my M.Sc. at Brown University, diving deeper into computer graphics, computer vision and AI. 
+Currently looking for roles where performance and creativity intersect.,
+            '''),
           SizedBox(height: 24),
           _BlinkingCursor(),
         ],
@@ -722,26 +727,34 @@ class _StatsPanel extends StatelessWidget {
       value: 'Providence, RI',
     ),
     _StatEntry(
-      icon: Icons.sports_soccer_outlined,
-      label: 'SPORT',
-      value: 'Football',
+      icon: FontAwesomeIcons.earthOceania,
+      label: 'ORIGIN',
+      value: 'Auckland, New Zealand',
     ),
+    _StatEntry(
+        icon: Icons.language,
+        label: 'LANGUAGES', value: 'English, Swedish'
+    ),
+    _StatEntry(icon: Icons.rowing, label: 'SPORT', value: 'Rowing'),
     _StatEntry(
       icon: Icons.videogame_asset_outlined,
       label: 'CURRENTLY PLAYING',
-      value: 'Elden Ring',
+      value: 'Pokemon Emerald',
     ),
-    _StatEntry(icon: Icons.menu_book_outlined, label: 'READING', value: 'SICP'),
     _StatEntry(
-      icon: Icons.psychology_outlined,
-      label: 'OBSESSION',
-      value: 'Proc. generation',
+      icon: Icons.videogame_asset,
+      label: 'TOP GAMES',
+      value: 'Binding of Isaac\nTerraria\nWitcher 3\nSkyrim\nMinecraft',
     ),
-    _StatEntry(icon: Icons.coffee_outlined, label: 'FUEL', value: 'Espresso'),
+    _StatEntry(
+      icon: Icons.scuba_diving,
+      label: 'OBSESSION',
+      value: 'Spearfishing',
+    ),
     _StatEntry(
       icon: Icons.music_note_outlined,
       label: 'SOUNDTRACK',
-      value: 'Math rock',
+      value: 'Of Monster\'s and Men',
     ),
   ];
 
@@ -751,7 +764,7 @@ class _StatsPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _TerminalLabel('CHAR_SHEET'),
+          const _TerminalLabel('INFO'),
           const SizedBox(height: 16),
           ..._stats.map((s) => _StatRow(entry: s)),
         ],

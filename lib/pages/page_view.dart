@@ -17,10 +17,7 @@ class ProjectPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: siteAppBar(
-        context,
-        nav: const BreadcrumbNav(label: 'PROJECTS', route: '/projects'),
-      ),
+      appBar: siteAppBar(context),
       body: SingleChildScrollView(
         child: Center(
           child: Container(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../links.dart';
@@ -7,46 +8,63 @@ import '../theme/theme.dart';
 import '../theme/text_theme.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NavConfig — tells siteAppBar what to render in the centre slot.
+// HomeScrollKeys
 //
-//   HomeNav(...)      — ABOUT · PROJECTS · CONTACT scroll-anchor links
-//   BreadcrumbNav(…)  — ← LABEL back link
-//   NoNav()           — empty centre (default for simple pages)
+// Singleton that holds the GlobalKeys for the home page scroll anchors.
+// Any page's app bar can call HomeScrollKeys.scrollTo(key) after navigating
+// to home, without needing a direct reference to the HomePage widget tree.
 // ─────────────────────────────────────────────────────────────────────────────
 
-sealed class NavConfig {
-  const NavConfig();
+class HomeScrollKeys {
+  HomeScrollKeys._();
+
+  static final GlobalKey top     = GlobalKey();
+  static final GlobalKey about   = GlobalKey();
+  static final GlobalKey contact = GlobalKey();
+
+  /// Scroll to [key] after the current frame — use after context.go('/') so
+  /// the home page has had a chance to build before we try to find the key.
+  static void scrollAfterFrame(GlobalKey key) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      final ctx = key.currentContext;
+      if (ctx == null) return;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOutCubic,
+        alignment: 0.0,
+      );
+    });
+  }
 }
 
-/// Home page: scroll-to-section links.
+// ─────────────────────────────────────────────────────────────────────────────
+// NavConfig — kept for API compatibility but collapsed to NoNav only.
+// All navigation is now handled by the unified _SiteNavLinks widget.
+// ─────────────────────────────────────────────────────────────────────────────
+
+sealed class NavConfig { const NavConfig(); }
 class HomeNav extends NavConfig {
+  // Kept so home.dart compiles unchanged; fields are unused — nav is global.
   final ScrollController scrollController;
   final GlobalKey aboutKey;
-  final GlobalKey projectsKey;
   final GlobalKey contactKey;
-
   const HomeNav({
     required this.scrollController,
     required this.aboutKey,
-    required this.projectsKey,
     required this.contactKey,
   });
 }
-
-/// Sub-pages: a single back-link breadcrumb.
 class BreadcrumbNav extends NavConfig {
   final String label;
   final String route;
   const BreadcrumbNav({required this.label, required this.route});
 }
-
-/// No centre content.
-class NoNav extends NavConfig {
-  const NoNav();
-}
+class NoNav extends NavConfig { const NoNav(); }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// siteAppBar
+// siteAppBar — nav parameter kept for backwards compatibility but ignored;
+// the unified nav bar is always shown.
 // ─────────────────────────────────────────────────────────────────────────────
 
 AppBar siteAppBar(BuildContext context, {NavConfig nav = const NoNav()}) {
@@ -71,14 +89,8 @@ AppBar siteAppBar(BuildContext context, {NavConfig nav = const NoNav()}) {
               ),
             ),
           ),
-          // ── Centre slot ───────────────────────────────────────────────────
-          Expanded(
-            child: switch (nav) {
-              HomeNav n     => _HomeNavLinks(nav: n),
-              BreadcrumbNav n => _Breadcrumb(nav: n),
-              NoNav()       => const SizedBox.shrink(),
-            },
-          ),
+          // ── Centre nav — always present ────────────────────────────────
+          Expanded(child: _SiteNavLinks()),
           // ── Social icons — always present ─────────────────────────────────
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -94,43 +106,342 @@ AppBar siteAppBar(BuildContext context, {NavConfig nav = const NoNav()}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _HomeNavLinks — ABOUT · PROJECTS · CONTACT scroll-anchor links
-// Hidden on narrow screens to prevent overflow.
+// _SiteNavLinks — horizontal on wide screens, hamburger on narrow
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _HomeNavLinks extends StatelessWidget {
-  final HomeNav nav;
-  const _HomeNavLinks({required this.nav});
+// The four nav items, defined once and shared between both layouts.
+List<({String label, VoidCallback onTap})> _navItems(BuildContext context) => [
+  (
+    label: 'HOME',
+    onTap: () {
+      if (GoRouterState.of(context).uri.toString() == Routes.home.path) {
+        HomeScrollKeys.scrollAfterFrame(HomeScrollKeys.top);
+      } else {
+        context.go(Routes.home.path);
+      }
+    },
+  ),
+  (
+    label: 'PROJECTS',
+    onTap: () => context.go(Routes.projects.path),
+  ),
+  (
+    label: 'ABOUT',
+    onTap: () {
+      if (GoRouterState.of(context).uri.toString() != Routes.home.path) {
+        context.go(Routes.home.path);
+      }
+      HomeScrollKeys.scrollAfterFrame(HomeScrollKeys.about);
+    },
+  ),
+  (
+    label: 'CONTACT',
+    onTap: () {
+      if (GoRouterState.of(context).uri.toString() != Routes.home.path) {
+        context.go(Routes.home.path);
+      }
+      HomeScrollKeys.scrollAfterFrame(HomeScrollKeys.contact);
+    },
+  ),
+];
 
-  void _scrollTo(GlobalKey key) {
-    final ctx = key.currentContext;
-    if (ctx == null) return;
-    Scrollable.ensureVisible(
-      ctx,
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeInOutCubic,
-      alignment: 0.0,
-    );
-  }
-
+class _SiteNavLinks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      // Hide nav links when the centre slot is too narrow to fit them.
-      if (constraints.maxWidth < 280) return const SizedBox.shrink();
+      // Below 580px switch to hamburger so links don't crowd the social icons.
+      if (constraints.maxWidth < 580) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: _HamburgerMenu(),
+        );
+      }
+      final items = _navItems(context);
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _NavLink(label: 'ABOUT',    onTap: () => _scrollTo(nav.aboutKey)),
-          _NavDot(),
-          _NavLink(label: 'PROJECTS', onTap: () => _scrollTo(nav.projectsKey)),
-          _NavDot(),
-          _NavLink(label: 'CONTACT',  onTap: () => _scrollTo(nav.contactKey)),
+          for (var i = 0; i < items.length; i++) ...[
+            if (i > 0) _NavDot(),
+            _NavLink(label: items[i].label, onTap: items[i].onTap),
+          ],
         ],
       );
     });
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _HamburgerMenu — animated ☰ / ✕ toggle with overlay dropdown
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _HamburgerMenu extends StatefulWidget {
+  @override
+  State<_HamburgerMenu> createState() => _HamburgerMenuState();
+}
+
+class _HamburgerMenuState extends State<_HamburgerMenu>
+    with SingleTickerProviderStateMixin {
+  bool _open = false;
+  OverlayEntry? _overlay;
+  late final AnimationController _ctrl;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 220),
+    );
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _slide = Tween<Offset>(
+      begin: const Offset(0, -0.08),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _removeOverlay();
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  void _toggle() {
+    if (_open) {
+      _close();
+    } else {
+      _showOverlay();
+    }
+  }
+
+  void _close() {
+    _ctrl.reverse().then((_) {
+      _removeOverlay();
+      if (mounted) setState(() => _open = false);
+    });
+  }
+
+  void _removeOverlay() {
+    _overlay?.remove();
+    _overlay = null;
+  }
+
+  void _showOverlay() {
+    setState(() => _open = true);
+    _ctrl.forward(from: 0);
+
+    final box = context.findRenderObject() as RenderBox;
+    final offset = box.localToGlobal(Offset.zero);
+    final appBarBottom = offset.dy + box.size.height;
+
+    _overlay = OverlayEntry(
+      builder: (ctx) => _DropdownOverlay(
+        top: appBarBottom,
+        fade: _fade,
+        slide: _slide,
+        items: _navItems(context),
+        onClose: _close,
+      ),
+    );
+    Overlay.of(context).insert(_overlay!);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _toggle,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 180),
+            child: Icon(
+              _open ? Icons.close_rounded : Icons.menu_rounded,
+              key: ValueKey(_open),
+              color: Colors.white70,
+              size: 26,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _DropdownOverlay — the actual dropdown panel rendered in the Overlay
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DropdownOverlay extends StatelessWidget {
+  final double top;
+  final Animation<double> fade;
+  final Animation<Offset> slide;
+  final List<({String label, VoidCallback onTap})> items;
+  final VoidCallback onClose;
+
+  const _DropdownOverlay({
+    required this.top,
+    required this.fade,
+    required this.slide,
+    required this.items,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Tap outside to close
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onClose,
+            child: const SizedBox.expand(),
+          ),
+        ),
+        // Dropdown panel — right-aligned, under the app bar
+        Positioned(
+          top: top,
+          right: 0,
+          child: FadeTransition(
+            opacity: fade,
+            child: SlideTransition(
+              position: slide,
+              child: Container(
+                width: 200,
+                margin: const EdgeInsets.only(top: 4, right: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0E0E1A),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: ThemeColors.appBarAccent.withValues(alpha: 0.25),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.55),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                    BoxShadow(
+                      color: ThemeColors.appBarAccent.withValues(alpha: 0.08),
+                      blurRadius: 32,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (var i = 0; i < items.length; i++) ...[
+                      _DropdownItem(
+                        label: items[i].label,
+                        onTap: () {
+                          onClose();
+                          items[i].onTap();
+                        },
+                        isFirst: i == 0,
+                        isLast: i == items.length - 1,
+                      ),
+                      if (i < items.length - 1)
+                        Container(
+                          height: 1,
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          color: Colors.white.withValues(alpha: 0.05),
+                        ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _DropdownItem — a single row inside the dropdown
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DropdownItem extends StatefulWidget {
+  final String label;
+  final VoidCallback onTap;
+  final bool isFirst;
+  final bool isLast;
+
+  const _DropdownItem({
+    required this.label,
+    required this.onTap,
+    required this.isFirst,
+    required this.isLast,
+  });
+
+  @override
+  State<_DropdownItem> createState() => _DropdownItemState();
+}
+
+class _DropdownItemState extends State<_DropdownItem> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit:  (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          decoration: BoxDecoration(
+            color: _hovered
+                ? ThemeColors.appBarAccent.withValues(alpha: 0.10)
+                : Colors.transparent,
+            borderRadius: BorderRadius.vertical(
+              top:    widget.isFirst ? const Radius.circular(10) : Radius.zero,
+              bottom: widget.isLast  ? const Radius.circular(10) : Radius.zero,
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          child: Row(
+            children: [
+              Text(
+                widget.label,
+                style: TextStyle(
+                  fontFamily: 'Electrolize',
+                  fontSize: 12,
+                  letterSpacing: 2.5,
+                  color: _hovered ? Colors.white : Colors.white60,
+                  fontWeight: _hovered ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+              const Spacer(),
+              AnimatedOpacity(
+                opacity: _hovered ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 150),
+                child: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 10,
+                  color: ThemeColors.appBarAccent,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _NavLink
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _NavLink extends StatefulWidget {
   final String label;
@@ -151,6 +462,7 @@ class _NavLinkState extends State<_NavLink> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit:  (_) => setState(() => _hovered = false),
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: widget.onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -168,7 +480,6 @@ class _NavLinkState extends State<_NavLink> {
                 ),
               ),
               const SizedBox(height: 3),
-              // Underline that grows in on hover
               AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
                 height: 1.5,
@@ -188,77 +499,10 @@ class _NavLinkState extends State<_NavLink> {
 
 class _NavDot extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Text(
+  Widget build(BuildContext context) => const Text(
         '·',
-        style: TextStyle(
-          color: Colors.white24,
-          fontSize: 14,
-        ),
+        style: TextStyle(color: Colors.white24, fontSize: 14),
       );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _Breadcrumb — ← LABEL back link for sub-pages
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _Breadcrumb extends StatefulWidget {
-  final BreadcrumbNav nav;
-  const _Breadcrumb({required this.nav});
-
-  @override
-  State<_Breadcrumb> createState() => _BreadcrumbState();
-}
-
-class _BreadcrumbState extends State<_Breadcrumb> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (_) => setState(() => _hovered = true),
-        onExit:  (_) => setState(() => _hovered = false),
-        child: GestureDetector(
-          onTap: () => context.go(widget.nav.route),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AnimatedSlide(
-                  duration: const Duration(milliseconds: 180),
-                  offset: _hovered
-                      ? const Offset(-0.15, 0)
-                      : Offset.zero,
-                  child: Icon(
-                    Icons.arrow_back_ios_rounded,
-                    size: 13,
-                    color: _hovered
-                        ? ThemeColors.appBarAccent
-                        : Colors.white38,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  widget.nav.label,
-                  style: TextStyle(
-                    fontFamily: 'Electrolize',
-                    fontSize: 11,
-                    letterSpacing: 2,
-                    color: _hovered
-                        ? ThemeColors.appBarAccent
-                        : Colors.white38,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -343,6 +587,7 @@ class _GlowIconButtonState extends State<_GlowIconButton> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit:  (_) => setState(() => _hovered = false),
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: widget.onPressed,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -371,4 +616,15 @@ class _GlowIconButtonState extends State<_GlowIconButton> {
       ),
     );
   }
+}
+
+class Separator extends StatelessWidget {
+  const Separator({super.key});
+
+  @override
+  Widget build(BuildContext context) => Container(
+        height: 1,
+        margin: const EdgeInsets.symmetric(vertical: 12),
+        color: Colors.white.withValues(alpha: 0.05),
+      );
 }
