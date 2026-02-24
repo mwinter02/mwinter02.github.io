@@ -92,7 +92,7 @@ class _FeaturedProjectsHeader extends StatelessWidget {
             end: Alignment.bottomRight,
           ).createShader(bounds),
           child: Text(
-            'FEATURED PROJECTS',
+            'PROJECTS',
             style: AppTextTheme.displayHeadline.copyWith(
               fontSize: 26,
               letterSpacing: 5,
