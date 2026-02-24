@@ -54,50 +54,32 @@ class _AboutHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 3,
-          height: 48,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(2),
-            gradient: const LinearGradient(
-              colors: [ThemeColors.appBarAccent, Colors.transparent],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+        ShaderMask(
+          shaderCallback: (bounds) => const LinearGradient(
+            colors: [Colors.white, Colors.white54],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ).createShader(bounds),
+          child: Text(
+            'ABOUT',
+            style: AppTextTheme.displayHeadline.copyWith(
+              fontSize: 26,
+              letterSpacing: 5,
+              color: AppTextColors.bright,
             ),
           ),
         ),
-        const SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [Colors.white, Colors.white54],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ).createShader(bounds),
-              child: Text(
-                'ABOUT',
-                style: AppTextTheme.displayHeadline.copyWith(
-                  fontSize: 26,
-                  letterSpacing: 5,
-                  color: AppTextColors.bright,
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'The person behind the keyboard',
-              style: AppTextTheme.labelField.copyWith(
-                fontSize: 12,
-                color: AppTextColors.subtle,
-                letterSpacing: 1.5,
-              ),
-            ),
-          ],
+        const SizedBox(height: 4),
+        Text(
+          'The person behind the keyboard',
+          style: AppTextTheme.labelField.copyWith(
+            fontSize: 12,
+            color: AppTextColors.subtle,
+            letterSpacing: 1.5,
+          ),
         ),
       ],
     );
@@ -758,7 +740,7 @@ class _StatsPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _TerminalLabel('INFO'),
+          const _TerminalLabel('CHARACTER_INFO'),
           const SizedBox(height: 16),
           ..._stats.map((s) => _StatRow(entry: s)),
         ],

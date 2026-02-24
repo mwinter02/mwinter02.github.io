@@ -82,51 +82,32 @@ class _FeaturedProjectsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Left accent rule
-        Container(
-          width: 3,
-          height: 48,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(2),
-            gradient: const LinearGradient(
-              colors: [ThemeColors.appBarAccent, Colors.transparent],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+        ShaderMask(
+          shaderCallback: (bounds) => const LinearGradient(
+            colors: [Colors.white, Colors.white54],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ).createShader(bounds),
+          child: Text(
+            'FEATURED PROJECTS',
+            style: AppTextTheme.displayHeadline.copyWith(
+              fontSize: 26,
+              letterSpacing: 5,
+              color: AppTextColors.bright,
             ),
           ),
         ),
-        const SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [Colors.white, Colors.white54],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ).createShader(bounds),
-              child: Text(
-                'FEATURED PROJECTS',
-                style: AppTextTheme.displayHeadline.copyWith(
-                  fontSize: 26,
-                  letterSpacing: 5,
-                  color: AppTextColors.bright,
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'A selection of recent work',
-              style: AppTextTheme.labelField.copyWith(
-                fontSize: 12,
-                color: AppTextColors.subtle,
-                letterSpacing: 1.5,
-              ),
-            ),
-          ],
+        const SizedBox(height: 4),
+        Text(
+          'A selection of recent work',
+          style: AppTextTheme.labelField.copyWith(
+            fontSize: 12,
+            color: AppTextColors.subtle,
+            letterSpacing: 1.5,
+          ),
         ),
       ],
     );
