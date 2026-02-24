@@ -18,12 +18,8 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Marcus Winter's online portfolio.">
 
-  <!-- viewport-fit=cover extends the Flutter canvas into the iOS safe areas
-       (behind the status bar notch and the home indicator). Without this the
-       browser leaves white bars at the top and bottom in Safari on iPhone. -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <!-- Colours the status-bar chrome in Safari / Chrome PWA to match the app
        background so there is no visible colour mismatch. -->
@@ -33,14 +29,14 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="website">
+  <meta name="apple-mobile-web-app-title" content="Marcus Winter">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon: prefer SVG, fallback to PNG -->
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png" type="image/png">
 
-  <title>website</title>
+  <title>Marcus Winter – Portfolio</title>
   <link rel="manifest" href="manifest.json">
 
   <style>
@@ -53,12 +49,8 @@
       width: 100%;
       height: 100%;
       background-color: #0D0D14;
-
-      /* Extend into safe areas on all sides */
-      padding-top:    env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      padding-left:   env(safe-area-inset-left);
-      padding-right:  env(safe-area-inset-right);
+      /* Extend background colour into safe-area gutters (notch, home indicator) */
+      background-clip: padding-box;
     }
 
     /* Flutter's canvas element should also fill the padded space */
@@ -66,32 +58,49 @@
       width: 100% !important;
       height: 100% !important;
     }
+
+    /* Use dynamic viewport height so the canvas resizes correctly
+       as Safari's address/tab bar shows and hides */
+    @supports (height: 100dvh) {
+      html, body, flutter-view, flt-glass-pane {
+        height: 100dvh !important;
+      }
+    }
   </style>
   <script>
-    // If redirected from 404.html with ?p=/website/some/path or ?redirect=/some/path,
-    // restore the original path (but protect against repeated redirection loops and huge URIs)
+    // Flutter replaces <meta name="viewport"> with its own at build time.
+    // Re-apply viewport-fit=cover so the canvas extends behind Safari's
+    // home indicator / notch. We do this as early as possible and again
+    // after DOMContentLoaded to catch Flutter's injected tag.
+    function applyViewportFit() {
+      var tag = document.querySelector('meta[name="viewport"]');
+      if (tag) {
+        var content = tag.getAttribute('content') || '';
+        if (content.indexOf('viewport-fit') === -1) {
+          tag.setAttribute('content', content + ', viewport-fit=cover');
+        }
+      }
+    }
+    applyViewportFit();
+    document.addEventListener('DOMContentLoaded', applyViewportFit);
+
+    // Restore the original path when redirected from 404.html via ?p= or ?redirect=
+    // (protects against redirect loops and huge URIs)
     (function () {
       try {
         var params = new URLSearchParams(window.location.search);
         var p = params.get('p') || params.get('redirect');
         if (p) {
-          // Decode once; if multiple encodings were applied, avoid repeated redirection
           var decoded = decodeURIComponent(p);
-
-          // If decoded already contains 'index.html' or points to this page, skip to avoid loops
           if (decoded.indexOf('index.html') !== -1 || decoded.length > 2000) {
             return;
           }
-
-          // Only use the path portion (remove origin if present)
           try {
             var u = new URL(decoded, window.location.origin);
             decoded = u.pathname + u.search + u.hash;
           } catch (e) {
             // not a full URL; leave decoded as-is
           }
-
-          // Replace browser URL without causing a reload so Flutter sees the intended path
           history.replaceState({}, '', decoded);
         }
       } catch (e) {
