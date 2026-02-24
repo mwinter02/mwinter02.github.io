@@ -1,12 +1,11 @@
 {
-    "name": "website",
-    "short_name": "website",
+    "name": "Marcus Winter – Portfolio",
+    "short_name": "Portfolio",
     "start_url": ".",
-    "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "display": "browser",
+    "background_color": "#0D0D14",
+    "theme_color": "#0D0D14",
+    "description": "Marcus Winter's online portfolio.",
     "prefer_related_applications": false,
     "icons": [
         {
