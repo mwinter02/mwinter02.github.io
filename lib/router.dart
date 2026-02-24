@@ -1,3 +1,4 @@
+import 'main.dart';
 import 'pages/home.dart';
 import 'pages/page_view.dart';
 import 'pages/projects.dart';
@@ -9,7 +10,6 @@ class Routes {
 
   static const String homePath = '/';
   static const String projectsPath = '/projects';
-
 
 
   static final List<GoRoute> projectRoutes = [
@@ -29,10 +29,35 @@ class Routes {
     ...projectRoutes,
   ];
 
+  // router.dart or a helper function
+  static Page<void> buildPage(BuildContext context, GoRouterState state, Widget child) {
+    final isMobile = isMobileNotifier.value;
+
+    if (isMobile) {
+      return NoTransitionPage(key: state.pageKey, child: child);
+    }
+
+    return CustomTransitionPage(
+      key: state.pageKey,
+      child: child,
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero).animate(animation), child: child);
+      },
+    );
+  }
+
   static GoRoute getProjectRoute(Project project) {
     return GoRoute(path: project.route,
-        builder: (BuildContext context, GoRouterState state) =>
-        ProjectPageView(markdownPath: project.markdownPath)
+
+        pageBuilder: (context, state) => buildPage(
+              context,
+              state,
+              ProjectPageView(markdownPath: project.markdownPath),
+            ),
+
+        // builder: (BuildContext context, GoRouterState state) =>
+        // ProjectPageView(markdownPath: project.markdownPath)
     );
   }
 
