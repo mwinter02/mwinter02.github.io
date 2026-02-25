@@ -6,22 +6,16 @@
       <stop offset="100%" stop-color="#7C4DFF"/>
     </linearGradient>
 
-    <!-- Soft outer glow -->
+    <!-- Soft outer glow (CoreSVG-compatible: blur + over composite) -->
     <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
       <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
 
     <!-- Sharper inner glow for crisp strokes at small sizes -->
     <filter id="crisp-glow" x="-15%" y="-15%" width="130%" height="130%">
       <feGaussianBlur in="SourceGraphic" stdDeviation="1.0" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
   </defs>
 
