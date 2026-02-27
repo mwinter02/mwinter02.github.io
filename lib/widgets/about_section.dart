@@ -679,7 +679,7 @@ In the fleeting moments when I have free time, I maintain my other life-long pas
           SizedBox(height: 14),
           _BioText('''
 Finishing my M.Sc. at Brown University, diving deeper into computer graphics, computer vision and AI. 
-Currently looking for roles where performance and creativity intersect.,
+Currently looking for roles where performance and creativity intersect.
             '''),
           SizedBox(height: 24),
           _BlinkingCursor(),
