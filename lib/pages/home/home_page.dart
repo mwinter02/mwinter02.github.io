@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../router.dart';
-import '../theme/text_theme.dart';
-import '../theme/theme.dart';
-import '../widgets/about_section.dart';
-import '../widgets/dynamic_widget.dart';
-import '../widgets/profile_card.dart';
-import '../widgets/project_gallery.dart';
-import '../widgets/site_widgets.dart';
-import 'projects.dart';
+import '../../router.dart';
+import '../../theme/text_theme.dart';
+import '../../theme/theme.dart';
+import '../../widgets/about_section.dart';
+import '../shared/dynamic_widget.dart';
+import '../../widgets/profile_card.dart';
+import '../../widgets/project_gallery.dart';
+import '../../widgets/site_widgets.dart';
+import '../projects/projects.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HomePage

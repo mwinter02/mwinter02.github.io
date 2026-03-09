@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'router.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'theme/theme.dart';
-import 'widgets/dynamic_widget.dart';
+import 'pages/shared/dynamic_widget.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

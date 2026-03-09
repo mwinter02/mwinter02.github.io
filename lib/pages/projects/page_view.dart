@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 export 'package:website/router.dart';
-import '../widgets/markdown_renderer.dart';
-import '../widgets/site_widgets.dart';
+import '../shared/markdown_renderer.dart';
+import '../../widgets/site_widgets.dart';
 
-export '../widgets/markdown_renderer.dart';
-export '../widgets/video_player.dart';
+export '../shared/markdown_renderer.dart';
+export '../shared/video_player.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:flutter/material.dart';
 

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../sources.dart';
-import '../theme/text_theme.dart';
-import 'dynamic_widget.dart';
-import 'site_widgets.dart';
+import '../../sources.dart';
+import '../../theme/text_theme.dart';
+import '../shared/dynamic_widget.dart';
+import '../../widgets/site_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // KnownProfilesPanel
@@ -24,11 +24,9 @@ import 'site_widgets.dart';
 //   Right — channel rows + clearance footer
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ── Tune these to match your details ────────────────────────────────────────
-const String _emailDisplay   = 'marcuswinter2002@gmail.com';
-const String _linkedInHandle = 'linkedin.com/in/mwinter02';
-const String _cvAssetPath    = 'assets/Resume - Marcus Winter.pdf';
 
+
+const double _aspectRatio = 1.75;
 class KnownProfilesPanel extends StatelessWidget {
   const KnownProfilesPanel({super.key});
 
@@ -266,7 +264,7 @@ class _EmailChannelState extends State<_EmailChannel> {
   bool _copied   = false;
 
   Future<void> _copy() async {
-    await Clipboard.setData(const ClipboardData(text: _emailDisplay));
+    await Clipboard.setData(const ClipboardData(text: Sources.email));
     setState(() => _copied = true);
     await Future.delayed(const Duration(milliseconds: 1800));
     if (mounted) setState(() => _copied = false);
@@ -291,7 +289,7 @@ class _EmailChannelState extends State<_EmailChannel> {
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 220),
                   child: Text(
-                    _emailDisplay,
+                    Sources.email,
                     key: ValueKey(_hovered || _copied),
                     overflow: TextOverflow.ellipsis,
                     style: AppTextTheme.monoData.copyWith(
@@ -375,7 +373,7 @@ class _LinkedInChannelState extends State<_LinkedInChannel> {
             children: [
               Flexible(
                 child: Text(
-                  _linkedInHandle,
+                  Sources.linkedIn,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextTheme.monoData.copyWith(
                     color: _hovered ? AppTextColors.bright : AppTextColors.secondary,
@@ -434,7 +432,7 @@ class _CvChannelState extends State<_CvChannel> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit:  (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: () => launchUrl(Uri.parse(_cvAssetPath)),
+        onTap: () => launchUrl(Uri.parse(AssetSources.resume)),
         child: _ChannelRow(
           icon: Icons.file_download_outlined,
           label: 'RESUME',
