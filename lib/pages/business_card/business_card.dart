@@ -1,0 +1,485 @@
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../sources.dart';
+import '../../theme/text_theme.dart';
+import '../../widgets/site_widgets.dart';
+import '../shared/dynamic_widget.dart';
+
+class ContactPage extends StatelessWidget {
+  const ContactPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: siteAppBar(context),
+      body: const Center(
+        child: BusinessCard(
+          name: 'Marcus Winter',
+          title: 'Software Engineer',
+          education:
+              'M.Sc. Computer Science,\nBrown University',
+          interests: [
+            'Game Development',
+            'Computer Graphics',
+            'Machine Learning',
+            'Full-Stack',
+          ],
+          profileImage: AssetImage('assets/images/headshot.jpg'),
+        ),
+      ),
+    );
+  }
+}
+
+class BusinessCard extends StatelessWidget {
+  final String name;
+  final String title;
+  final String education;
+  final List<String> interests;
+  final ImageProvider profileImage;
+
+  const BusinessCard({
+    super.key,
+    required this.name,
+    required this.title,
+    required this.education,
+    required this.interests,
+    required this.profileImage,
+  });
+
+  static BoxDecoration _boxDecoration() {
+    return BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFF1A0533), Color(0xFF311B92)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(
+        color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+        width: 1.5,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 860, minWidth: 320),
+        child: Container(
+          decoration: _boxDecoration(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 4),
+              _CardHeader(
+                name: name,
+                title: title,
+                education: education,
+                interests: interests,
+                profileImage: profileImage,
+              ),
+              const _CardDivider(label: 'Contact Details'),
+              const SizedBox(height: 8),
+              _ContactInfo(),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _CardHeader
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _CardHeader extends DynamicWidget {
+  final String name;
+  final String title;
+  final String education;
+  final List<String> interests;
+  final ImageProvider profileImage;
+
+  const _CardHeader({
+    required this.name,
+    required this.title,
+    required this.education,
+    required this.interests,
+    required this.profileImage,
+  });
+
+  @override
+  Widget desktopView(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(28, 28, 28, 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: _ProfileDetails(
+              name: name,
+              title: title,
+              education: education,
+              interests: interests,
+            ),
+          ),
+          const SizedBox(width: 28),
+          // Right column: tap hint above the avatar
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // _TapToFlip(),
+              // const SizedBox(height: 10),
+              _ProfileAvatar(image: profileImage),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget mobileView(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: _ProfileDetails(
+              name: name,
+              title: title,
+              education: education,
+              interests: interests,
+            ),
+          ),
+          const SizedBox(width: 16),
+          _ProfileAvatar(image: profileImage, radius: 48),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _ProfileAvatar
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ProfileAvatar extends StatelessWidget {
+  final ImageProvider image;
+  final double radius;
+
+  const _ProfileAvatar({required this.image, this.radius = 80});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const SweepGradient(
+          colors: [
+            Colors.deepPurpleAccent,
+            Colors.purpleAccent,
+            Colors.deepPurpleAccent,
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+            blurRadius: 16,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: CircleAvatar(
+        radius: radius,
+        backgroundImage: image,
+        backgroundColor: const Color(0xFF1A0533),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _ProfileDetails
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ProfileDetails extends StatelessWidget {
+  final String name;
+  final String title;
+  final String education;
+  final List<String> interests;
+
+  const _ProfileDetails({
+    required this.name,
+    required this.title,
+    required this.education,
+    required this.interests,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Name
+        Text(name, style: AppTextTheme.displayName.copyWith(fontSize: 26)),
+        const SizedBox(height: 4),
+        // Title chip
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+          decoration: BoxDecoration(
+            color: Colors.deepPurpleAccent.withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+            ),
+          ),
+          child: Text(
+            title,
+            style: AppTextTheme.displaySubtitle.copyWith(fontSize: 13),
+          ),
+        ),
+        const SizedBox(height: 14),
+        _DetailRow(icon: Icons.school_outlined, text: education),
+        const SizedBox(height: 8),
+        _DetailRow(icon: Icons.interests_outlined, text: interests.join(' · ')),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _CardDivider
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _CardDivider extends StatelessWidget {
+  final String label;
+
+  const _CardDivider({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 1,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    Colors.deepPurpleAccent.withValues(alpha: 0.7),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              label,
+              style: AppTextTheme.labelField.copyWith(
+                fontSize: 11,
+                color: AppTextColors.accent,
+                letterSpacing: 2.5,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              height: 1,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.deepPurpleAccent.withValues(alpha: 0.7),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _ContactInfo
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ContactInfo extends StatelessWidget {
+  const _ContactInfo();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 400;
+        final hPad = narrow ? 16.0 : 28.0;
+        final gap = narrow ? 10.0 : 16.0;
+
+        return Padding(
+          padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 8),
+          child: Column(
+            children: [
+              const _Channel(
+                icon: Icons.mail_outline,
+                text: Sources.email,
+                accentColor: Color.fromARGB(255, 255, 139, 139),
+                copyText: Sources.email,
+              ),
+              SizedBox(height: gap),
+              _Channel(
+                icon: FontAwesomeIcons.linkedin,
+                text: 'linkedin.com/in/mwinter02',
+                accentColor: AppTextColors.linkedIn,
+                launchUri: Sources.linkedInLaunchUri,
+              ),
+              SizedBox(height: gap),
+              const _Channel(
+                icon: Icons.phone,
+                text: Sources.phone,
+                accentColor: AppTextColors.terminal,
+                copyText: Sources.phone,
+              ),
+              SizedBox(height: gap),
+              _Channel(
+                icon: Icons.file_download_outlined,
+                text: 'resume_marcus_winter.pdf',
+                accentColor: AppTextColors.amber,
+                launchUri: Uri.parse(AssetSources.resume),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _DetailRow  (icon + text line)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DetailRow extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _DetailRow({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: Colors.deepPurpleAccent.shade100),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: AppTextTheme.bodySmall.copyWith(fontSize: 13.5),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _Channel  — icon + link text, optional copy-on-tap or launch-on-tap
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _Channel extends StatefulWidget {
+  final IconData icon;
+  final String text;
+  final Color accentColor;
+
+  /// When set, tapping copies this string to the clipboard and shows "COPIED".
+  /// Mutually exclusive with [launchUri].
+  final String? copyText;
+
+  /// When set, tapping launches this URI.
+  /// Mutually exclusive with [copyText].
+  final Uri? launchUri;
+
+  const _Channel({
+    required this.icon,
+    required this.text,
+    required this.accentColor,
+    this.copyText,
+    this.launchUri,
+  }) : assert(
+         (copyText != null) != (launchUri != null),
+         '_Channel requires exactly one of copyText or launchUri',
+       );
+
+  @override
+  State<_Channel> createState() => _ChannelState();
+}
+
+class _ChannelState extends State<_Channel> {
+  bool _hovered = false;
+  bool _copied = false;
+
+  Future<void> _onTap() async {
+    if (widget.copyText != null) {
+      await Clipboard.setData(ClipboardData(text: widget.copyText!));
+      setState(() => _copied = true);
+      await Future.delayed(const Duration(milliseconds: 1800));
+      if (mounted) setState(() => _copied = false);
+    } else {
+      launchUrl(widget.launchUri!);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = widget.accentColor;
+
+    final iconBox = Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: accent.withValues(alpha: 0.25), width: 1),
+      ),
+      child: Icon(widget.icon, size: 15, color: accent.withValues(alpha: 0.8)),
+    );
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: _onTap,
+        child: Row(
+          children: [
+            iconBox,
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                _copied ? 'COPIED //' : widget.text,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextTheme.monoData.copyWith(
+                  color: _hovered || _copied ? accent : AppTextColors.secondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
