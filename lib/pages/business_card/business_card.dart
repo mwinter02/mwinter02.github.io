@@ -7,6 +7,7 @@ import '../../sources.dart';
 import '../../theme/text_theme.dart';
 import '../../widgets/site_widgets.dart';
 import '../shared/dynamic_widget.dart';
+import '../shared/text_box.dart';
 
 /// Triggers a browser "Save As" download for the bundled resume asset.
 void _downloadResume() {
@@ -25,19 +26,32 @@ class ContactPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: siteAppBar(context),
-      body: const Center(
-        child: BusinessCard(
-          name: 'Marcus Winter',
-          title: 'Software Engineer',
-          education:
-              'M.Sc. Computer Science,\nBrown University',
-          interests: [
-            'Game Development',
-            'Computer Graphics',
-            'Machine Learning',
-            'Full-Stack',
-          ],
-          profileImage: AssetImage('assets/images/headshot.jpg'),
+      body: SingleChildScrollView(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 860),
+            child: const Column(
+              children: [
+                BusinessCard(
+                  name: 'Marcus Winter',
+                  title: 'Software Engineer',
+                  education:
+                      'M.Sc. Computer Science,\nBrown University',
+                  interests: [
+                    'Game Development',
+                    'Computer Graphics',
+                    'Machine Learning',
+                    'Full-Stack',
+                  ],
+                  profileImage: AssetImage('assets/images/headshot.jpg'),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(32, 0, 32, 40),
+                  child: _QrSection(),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -501,3 +515,74 @@ class _ChannelState extends State<_Channel> {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _QrSection
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _QrSection extends StatelessWidget {
+  const _QrSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return PageTextBox(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+        child: Column(
+          children: [
+            Text(
+              'Scan to share',
+              style: AppTextTheme.labelField.copyWith(
+                fontSize: 11,
+                color: AppTextColors.accent,
+                letterSpacing: 2.5,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // ── Swap AssetSources.qrCode for your generated QR image file ──
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                AssetSources.qrCode,
+                width: 180,
+                height: 180,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 180,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurpleAccent.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.deepPurpleAccent.withValues(alpha: 0.3),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.qr_code_2_rounded,
+                        size: 64,
+                        color: Colors.deepPurpleAccent.withValues(alpha: 0.4),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'qr_code.png',
+                        style: AppTextTheme.bodySmall.copyWith(
+                          color: AppTextColors.subtle,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

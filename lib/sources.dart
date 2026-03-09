@@ -18,6 +18,9 @@ class AssetSources {
   AssetSources._();
   static const String resume = 'assets/Resume - Marcus Winter.pdf';
 
+  // Replace with your generated QR code image file
+  static const String qrCode = 'assets/images/contact_qr.png';
+
   static const String bannerAirobic = 'assets/images/banners/airobic.jpg';
   static const String bannerArgo = 'assets/images/banners/argo.jpg';
   static const String bannerCollider = 'assets/images/banners/collider.jpg';
