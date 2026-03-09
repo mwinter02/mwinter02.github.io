@@ -24,7 +24,11 @@ class ThemeColors {
   static const Color secondary = Colors.deepPurpleAccent;
 
   /// Page background — cool charcoal.
-  static const Color background = Color(0xFF0D0D14);
+  static const Color boxBackground = Color(0xFF0D0D14); // Color(0xFF111120)
+  static final Color boxBorder = Colors.white.withValues(alpha: 0.07); // with alpha 0.07 for subtlety
+  static final Color boxShadow = Colors.black.withValues(alpha: 0.35);
+
+  static final Color textBoxDivider = Colors.white.withValues(alpha: 0.06);
 
   /// App bar gradient stops.
   static const Color appBarStart = Color(0xFF0D0D14); // charcoal

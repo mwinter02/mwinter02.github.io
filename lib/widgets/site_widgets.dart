@@ -45,7 +45,7 @@ class HomeScrollKeys {
 
 sealed class NavConfig { const NavConfig(); }
 class HomeNav extends NavConfig {
-  // Kept so home.dart compiles unchanged; fields are unused — nav is global.
+  // Kept so home_page.dart compiles unchanged; fields are unused — nav is global.
   final ScrollController scrollController;
   final GlobalKey aboutKey;
   final GlobalKey contactKey;

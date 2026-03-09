@@ -3,7 +3,8 @@ class Sources {
   Sources._();
   static const String github = 'mwinter02';
   static const String linkedIn = 'https://www.linkedin.com/in/mwinter02/';
-  static const String email = 'marcuswinter2002@gmail.com';
+  static const String email = 'marcus.a.winter@gmail.com';
+  static const String phone = '+1 (401) 537-9663';
 
 
   static final Uri linkedInLaunchUri = Uri.parse(linkedIn);
