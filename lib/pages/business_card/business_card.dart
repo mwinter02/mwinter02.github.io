@@ -1,11 +1,22 @@
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:web/web.dart' as web;
 
 import '../../sources.dart';
 import '../../theme/text_theme.dart';
 import '../../widgets/site_widgets.dart';
 import '../shared/dynamic_widget.dart';
+
+/// Triggers a browser "Save As" download for the bundled resume asset.
+void _downloadResume() {
+  final anchor = web.HTMLAnchorElement()
+    ..href = AssetSources.resume
+    ..download = 'Resume - Marcus Winter.pdf';
+  web.document.body!.append(anchor);
+  anchor.click();
+  anchor.remove();
+}
 
 class ContactPage extends StatelessWidget {
   const ContactPage({super.key});
@@ -333,11 +344,11 @@ class _ContactInfo extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 8),
           child: Column(
             children: [
-              const _Channel(
+              _Channel(
                 icon: Icons.mail_outline,
                 text: Sources.email,
-                accentColor: Color.fromARGB(255, 255, 139, 139),
-                copyText: Sources.email,
+                accentColor: const Color.fromARGB(255, 255, 139, 139),
+                launchUri: Sources.emailLaunchUri,
               ),
               SizedBox(height: gap),
               _Channel(
@@ -358,7 +369,7 @@ class _ContactInfo extends StatelessWidget {
                 icon: Icons.file_download_outlined,
                 text: 'resume_marcus_winter.pdf',
                 accentColor: AppTextColors.amber,
-                launchUri: Uri.parse(AssetSources.resume),
+                onTap: _downloadResume,
               ),
             ],
           ),
@@ -405,13 +416,14 @@ class _Channel extends StatefulWidget {
   final String text;
   final Color accentColor;
 
-  /// When set, tapping copies this string to the clipboard and shows "COPIED".
-  /// Mutually exclusive with [launchUri].
+  /// Tapping copies this string to the clipboard and shows "COPIED".
   final String? copyText;
 
-  /// When set, tapping launches this URI.
-  /// Mutually exclusive with [copyText].
+  /// Tapping launches this URI.
   final Uri? launchUri;
+
+  /// Custom tap handler (e.g. trigger a download).
+  final VoidCallback? onTap;
 
   const _Channel({
     required this.icon,
@@ -419,9 +431,13 @@ class _Channel extends StatefulWidget {
     required this.accentColor,
     this.copyText,
     this.launchUri,
+    this.onTap,
   }) : assert(
-         (copyText != null) != (launchUri != null),
-         '_Channel requires exactly one of copyText or launchUri',
+         (copyText != null ? 1 : 0) +
+                 (launchUri != null ? 1 : 0) +
+                 (onTap != null ? 1 : 0) ==
+             1,
+         '_Channel requires exactly one of copyText, launchUri, or onTap',
        );
 
   @override
@@ -438,8 +454,10 @@ class _ChannelState extends State<_Channel> {
       setState(() => _copied = true);
       await Future.delayed(const Duration(milliseconds: 1800));
       if (mounted) setState(() => _copied = false);
-    } else {
+    } else if (widget.launchUri != null) {
       launchUrl(widget.launchUri!);
+    } else {
+      widget.onTap!();
     }
   }
 
