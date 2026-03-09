@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../router.dart';
 import '../theme/text_theme.dart';
-import 'dynamic_widget.dart';
+import '../pages/shared/dynamic_widget.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ProjectCard

@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../sources.dart';
 import '../theme/custom_icons.dart';
 import '../theme/text_theme.dart';
-import 'dynamic_widget.dart';
+import '../pages/shared/dynamic_widget.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Data model for a language badge
@@ -92,6 +92,7 @@ class ProfileCard extends DynamicWidget {
     this.interests = const [
       'Game Development',
       'Computer Graphics',
+      'Machine Learning',
       'Full-Stack Development',
     ],
     this.badges = _defaultBadges,

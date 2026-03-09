@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/project.dart';
+import '../pages/projects/projects.dart';
 import '../theme/text_theme.dart';
 import '../theme/theme.dart';
 import 'project_card.dart';
