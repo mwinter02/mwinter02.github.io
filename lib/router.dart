@@ -1,7 +1,8 @@
 import 'main.dart';
-import 'pages/home.dart';
-import 'pages/page_view.dart';
-import 'pages/projects.dart';
+import 'pages/business_card/business_card.dart';
+import 'pages/home/home_page.dart';
+import 'pages/projects/page_view.dart';
+import 'pages/projects/projects.dart';
 
 export 'package:go_router/go_router.dart';
 
@@ -10,6 +11,7 @@ class Routes {
 
   static const String homePath = '/';
   static const String projectsPath = '/projects';
+  static const String contactPath = '/contact';
 
 
   static final List<GoRoute> projectRoutes = [
@@ -21,11 +23,13 @@ class Routes {
     terrain,
     urbanize,
     pacman,
+    courses,
   ];
 
   static final List<GoRoute> all = [
     home,
     projects,
+    contact,
     ...projectRoutes,
   ];
 
@@ -69,6 +73,7 @@ class Routes {
   static GoRoute airobic = getProjectRoute(Projects.airobic);
   static GoRoute terrain = getProjectRoute(Projects.terrain);
   static GoRoute pacman = getProjectRoute(Projects.pacman);
+  static GoRoute courses = getProjectRoute(Projects.courses);
 
   static GoRoute projects = GoRoute(
     path: projectsPath,
@@ -76,10 +81,16 @@ class Routes {
         const ProjectsPage(),
   );
 
+  static GoRoute contact = GoRoute(
+    path: contactPath,
+    builder: (BuildContext context, GoRouterState state) =>
+        const ContactPage(),
+  );
+
   static GoRoute home = GoRoute(
     path: homePath,
     builder: (BuildContext context, GoRouterState state) => const HomePage(),
-    routes: <RouteBase>[projects, ...projectRoutes],
+    routes: <RouteBase>[projects, contact, ...projectRoutes],
   );
 }
 

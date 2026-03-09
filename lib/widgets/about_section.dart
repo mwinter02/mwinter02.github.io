@@ -2,8 +2,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../sources.dart';
 import '../theme/text_theme.dart';
 import '../theme/theme.dart';
-import 'contact_section.dart';
-import 'dynamic_widget.dart';
+import '../pages/contact/contact_section.dart';
+import '../pages/shared/dynamic_widget.dart';
 import 'site_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
