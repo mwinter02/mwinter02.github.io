@@ -81,6 +81,7 @@ flutter:
 
       # Project Data
     - assets/markdown/
+    - assets/courses/
     - assets/images/projects/
 
     - assets/images/projects/airobic/

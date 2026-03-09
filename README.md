@@ -16,6 +16,7 @@ Currently playing: Pokemon Emerald
 
 ### TODO
 
+Move video demos to youtube and embed
 
 #### Projects
 - [x] Interactive Collider Design
