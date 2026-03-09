@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
-import '../models/project.dart';
-import '../router.dart';
-import '../sources.dart';
-import '../widgets/project_gallery.dart';
-import '../widgets/site_widgets.dart';
-
-// Re-export Project so existing imports of projects.dart still resolve.
-export '../models/project.dart';
+import '../../router.dart';
+import '../../sources.dart';
+import '../../widgets/project_gallery.dart';
+import '../../widgets/site_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Projects registry — single source of truth for all project data
 // ─────────────────────────────────────────────────────────────────────────────
+
+class Project {
+  final String route;
+  final String title;
+  final String imagePath;
+  final String description;
+  final String markdownPath;
+  final List<String> tags;
+
+  Project({
+    required this.route,
+    required this.title,
+    required this.imagePath,
+    required this.description,
+    required this.markdownPath,
+    required this.tags,
+  });
+}
+
 
 class Projects {
   static const String _projectsPath = Routes.projectsPath;
@@ -28,6 +43,7 @@ class Projects {
     urbanize,
     airobic,
     pacman,
+    courses
   ];
 
   static final zombies = Project(
@@ -105,6 +121,16 @@ class Projects {
         'A faithful recreation of the classic arcade game, built in my first semester of coding.',
     tags: ['Java', 'Game Dev'],
     markdownPath: getMdPath('pacman'),
+  );
+
+  static final courses = Project(
+    route: '$_projectsPath/courses',
+    imagePath: AssetSources.bannerPngChaser,
+    title: 'Coursework',
+    description:
+        'A selection of projects from my coursework.',
+    tags: ['Coursework'],
+    markdownPath: getMdPath('courses'),
   );
 }
 
