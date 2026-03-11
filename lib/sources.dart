@@ -24,7 +24,7 @@ class Sources {
 class AssetSources {
   AssetSources._();
 
-  static const String resume = 'assets/Resume_Marcus_Winter.pdf';
+  static const String resume = 'assets/assets/Resume_Marcus_Winter.pdf';
 
   // Replace with your generated QR code image file
   static const String qrCode = 'assets/images/contact_qr.png';
