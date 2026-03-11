@@ -433,7 +433,7 @@ class _CvChannelState extends State<_CvChannel> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit:  (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: () => Sources.downloadResume,
+        onTap: () => Sources.downloadResume(),
         child: _ChannelRow(
           icon: Icons.file_download_outlined,
           label: 'RESUME',
