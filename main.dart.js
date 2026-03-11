@@ -28098,7 +28098,7 @@ for(s=0;s<a.children.length;++s){r=a.children.item(s)
 r.toString
 if(A.f1(r,"HTMLScriptElement"))if(J.aQV(r.src,b))return!0}return!1},
 aK_(){var s=v.G,r=s.document.createElement("a")
-r.href="assets/Resume_Marcus_Winter.pdf"
+r.href="assets/assets/Resume_Marcus_Winter.pdf"
 r.download="Resume - Marcus Winter.pdf"
 s.document.body.append(r)
 r.click()
