@@ -10,14 +10,7 @@ import '../shared/dynamic_widget.dart';
 import '../shared/text_box.dart';
 
 /// Triggers a browser "Save As" download for the bundled resume asset.
-void _downloadResume() {
-  final anchor = web.HTMLAnchorElement()
-    ..href = AssetSources.resume
-    ..download = 'Resume - Marcus Winter.pdf';
-  web.document.body!.append(anchor);
-  anchor.click();
-  anchor.remove();
-}
+
 
 class ContactPage extends StatelessWidget {
   const ContactPage({super.key});
@@ -379,11 +372,11 @@ class _ContactInfo extends StatelessWidget {
                 copyText: Sources.phone,
               ),
               SizedBox(height: gap),
-              _Channel(
+              const _Channel(
                 icon: Icons.file_download_outlined,
                 text: 'resume_marcus_winter.pdf',
                 accentColor: AppTextColors.amber,
-                onTap: _downloadResume,
+                onTap: Sources.downloadResume,
               ),
             ],
           ),

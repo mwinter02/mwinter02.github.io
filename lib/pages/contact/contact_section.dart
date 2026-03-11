@@ -422,14 +422,7 @@ class _CvChannel extends StatefulWidget {
   @override
   State<_CvChannel> createState() => _CvChannelState();
 }
-void _downloadResume() {
-  final anchor = web.HTMLAnchorElement()
-    ..href = AssetSources.resume
-    ..download = 'Resume - Marcus Winter.pdf';
-  web.document.body!.append(anchor);
-  anchor.click();
-  anchor.remove();
-}
+
 class _CvChannelState extends State<_CvChannel> {
   bool _hovered = false;
 
@@ -440,7 +433,7 @@ class _CvChannelState extends State<_CvChannel> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit:  (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: () => _downloadResume,
+        onTap: () => Sources.downloadResume,
         child: _ChannelRow(
           icon: Icons.file_download_outlined,
           label: 'RESUME',
