@@ -2,149 +2,153 @@
 
 ## Brief
 
-Interactive Collider Design is a computational design system for creating collision meshes (colliders) for both static
-and skeletal 3D assets. The tool was developed as a team project over 6 weeks, providing an intuitive interface for
-decomposing meshes and rigging colliders to animated skeletons.
+Interactive Collider Design is a computational design tool for creating convex collision meshes (colliders) for both
+static and skeletal 3D assets. Built over 4 weeks as part of Brown University's CSCI 2952Y - "Special Topics in
+Computational Design and Fabrication" course.
 
 - **Project Type**: Team (Marcus Winter, Gordan Milovac, Patrick Ortiz)
-
-- **My Contributions**: Static mesh decomposition interface, skeletal mesh decomposition algorithm and interface, collider export system
-
-- **Skills**: C++, Mesh Processing, Skinned Meshes, Computational Geometry, Assimp, OpenGL, UI Development
-
+- **My Contributions**: Static mesh decomposition interface, skeletal mesh decomposition algorithm and interface,
+  collider export system
+- **Skills**: C++, Mesh Processing, Skinned Meshes, Computational Geometry, Assimp, OpenGL, ImGUI, UI Development
+- **Dependencies**: Assimp, CoACD, GLFW, GLEW, GLM, Native File Dialogue Extended, Quickhull, ImGUI
 
 <video src="collider_demo.mp4"> </video>
-
 
 ## Overview
 
 After working on collision detection for my custom game engine (PNG Chaser), I realized that creating collision meshes
-was surprisingly difficult and unintuitive. Algorithms like VHACD and CoACD provide mesh decomposition, but they don't
-give any visual feedback on what the result looks like or export to usable formats like .obj files. This makes it really
-hard to tweak parameters and find the right balance between detail and performance. On top of that, existing tools in
-Unreal and Unity can generate colliders for rigged meshes, but the assets aren't exportable or usable in other game
-engines.
+was surprisingly difficult and unintuitive. Algorithms like V-HACD and CoACD handle mesh decomposition, but on their own
+they offer no visual feedback on results and can't export to usable formats. This makes it hard to tune parameters and
+find the right balance between detail and performance. On top of that, tools in Unreal and Unity can generate colliders
+for rigged meshes, but those assets aren't exportable or usable in other engines.
 
-This project was built as part of Brown University's CSCI 2952Y - "Special Topics in Computational Design and
-Fabrication" course. The goal was to create a computational design system that solves a real problem for game
-developers, physics simulations, and anyone working with collision physics.
+The goal of this project was to build a practical tool that fills that gap. It provides a comprehensive ImGUI interface
+for generating collision meshes for both static and skeletal 3D assets, letting users visualize and adjust quality
+parameters in real time to balance performance against accuracy. The tool is aimed at anyone who needs convex colliders
+for physics, whether for simulations or game engines.
 
-The tool provides an interactive interface for generating collision meshes for both static and skeletal 3D assets. For
-static meshes, we integrated CoACD (which promises better quality decomposition since it's not voxel-based) and wrapped
-it in a UI that lets you tune parameters and see results in real time. For skeletal meshes, I developed an algorithm
-that decomposes the mesh based on bone weights, creating convex parts that align with the skeleton structure—something
-that wasn't readily available before. All generated colliders can be exported as .obj or .fbx files that work in any
-game engine.
+For static meshes, we integrated CoACD, a newer algorithm that improves on V-HACD by avoiding voxelization, and wrapped
+it in a UI for real-time parameter tuning. For skeletal meshes, I developed a custom algorithm that decomposes the mesh
+based on bone weights and hierarchy, producing convex hulls rigged directly to the original skeleton. All generated
+colliders can be exported as `.obj` or `.fbx` files that work in any engine or DCC tool.
 
 GitHub Repository: [https://github.com/mwinter02/CS2952Y_Final](https://github.com/mwinter02/CS2952Y_Final)
 
 ## Development
 
-The project was split into several key components, with my work focusing on the static mesh decomposition interface, the
+The project was split into several key components, with my work focused on the static mesh decomposition interface, the
 skeletal mesh decomposition algorithm, and the export system.
 
-### Static Mesh Decomposition Interface
+### Asset Importing
 
-For static meshes, I built the UI wrapper around CoACD to make it actually usable. CoACD is a powerful decomposition
-algorithm, but on its own it's just a library with no visual feedback. I implemented sliders and controls to expose the
-key parameters—things like decomposition threshold, maximum number of convex hulls, and outset distance. Users can tweak
-these in real time and immediately see how it affects the collider quality.
+For opening and importing 3D files, we used the Open Asset Import Library (Assimp), an open-source C++ library that
+supports nearly every widely used 3D format, from legacy `.obj` to modern `.fbx`. Once a file is imported, we load the
+associated textures and populate the OpenGL buffers for rendering.
 
-<!-- Image: Static mesh UI -->
+### Static Mesh Decomposition
+
+For static meshes, I built the UI wrapper around CoACD to make it genuinely usable. CoACD is a powerful decomposition
+algorithm, but as a standalone library it provides no visual feedback whatsoever. I exposed the key parameters through
+sliders and controls so users can tune things like decomposition threshold, maximum convex hull count, and outset
+distance, seeing the results update in real time.
+
+To help users understand what they're looking at, I added wireframe overlay modes so both the original mesh and the
+generated colliders are visible simultaneously, making it easy to spot areas where the collider is too coarse or too
+detailed.
+
+The static decomposition interface offers two modes. Simple mode provides a set of presets covering various quality
+levels, giving users a quick starting point. Advanced mode exposes the full set of CoACD parameters directly through GUI
+sliders for users who want precise control.
+
+Both modes also include an AABB option, which represents each decomposed region as an axis-aligned bounding box rather
+than a convex hull. This trades some accuracy for maximum runtime efficiency, which is useful in performance-sensitive
+contexts.
+
 > #### Static mesh decomposition UI
-> 
+>
 > ![static_ui.png](/assets/assets/images/projects/collider/static_ui.png)
-> 
 
-The visualization was really important here. I added wireframe overlay modes so you can see both the original mesh and
-the generated collider at the same time. This makes it way easier to spot areas where the collider doesn't match well or
-has too much/too little detail. I also implemented axis-aligned bounding box (AABB) generation as a simpler alternative
-to convex decomposition for cases where performance matters more than accuracy.
+### Skeletal Mesh Decomposition
 
-The main challenge was getting CoACD integrated smoothly—making sure the parameters were intuitive and that the
-processing time didn't freeze the UI. For larger meshes, decomposition can take a while, so giving visual feedback
-during the process was important.
+This was the more novel part of the project. No readily available algorithm existed for decomposing skinned meshes into
+convex parts that follow skeleton structure, so I designed one from scratch.
 
+The algorithm analyzes bone weights and the skeleton hierarchy, and assigns each vertex to the bone with the greatest
+weight influence. A convex hull is then generated per selected bone using all the vertices assigned to it. There are
+three selection modes:
 
-### Skeletal Mesh Decomposition Algorithm
+**Important Bones** uses a custom heuristic that scores each bone based on its number of children and the volume of the
+vertices it influences. Bones that control a larger, more geometrically significant portion of the mesh are flagged as
+important and given their own collider. This keeps the collider count manageable while ensuring meaningful coverage.
 
-This was the more novel part of the project. There wasn't a readily available algorithm for decomposing skinned meshes
-into convex parts that follow the skeleton structure, so I had to design one from scratch.
+**All Bones** generates a collider for every bone in the skeleton, useful when complete coverage is needed.
 
-The algorithm works by analyzing bone weights and skeleton hierarchy. I implemented two main approaches:
+**Custom Bones** presents a dropdown list of every bone in the file with individual checkboxes, letting users toggle
+specific bones on and off. This is practical when you know exactly which parts need collision, such as just the limbs or
+just the torso.
 
-**Importance Heuristic:** This calculates the importance of each bone based on its total children and the volume of
-vertices it influences. The idea is that bones controlling more of the mesh should get their own colliders. Each vertex
-gets assigned to the bone with the greatest weight influence, then I generate one convex hull per important bone using
-all the vertices weighted to it.
-
-**All Bones or Custom Selection:** Users can also choose to generate colliders for all bones, or manually select
-specific bones they care about. This is useful when you know exactly which parts need collision (like just the limbs, or
-just the torso).
+The generated colliders are then rigged to the same skeleton as the input mesh, meaning they deform correctly during
+animation and can be exported as a complete skinned mesh asset. As with static meshes, a bounding box mode is available.
+Because the bones rotate and translate during animation, these boxes do not remain axis-aligned at runtime, but they are
+still represented as cuboids, which keeps them efficient relative to full convex hulls.
 
 > #### Skeletal mesh decomposition UI
-> 
+>
 > ![skeletal_ui.png](/assets/assets/images/projects/collider/skeletal_ui.png)
-> 
-
-For each selected bone, the algorithm creates one convex hull from all the vertices weighted to it. I also added an AABB
-option for cases where a simple bounding box is good enough. The generated colliders are then rigged to the same
-skeleton as the input mesh, which means they deform correctly during animation and can be exported as a complete skinned
-mesh asset.
-
-The biggest challenge here was learning the skeletal mesh structure and correctly traversing the bone hierarchy.
-Skeletal meshes have this tree structure where bones have parents and children, and each vertex can be influenced by
-multiple bones with different weights. Getting all of this right—especially making sure the colliders stayed properly
-attached to their bones during animation—took a lot of debugging.
 
 > #### Rigged colliders with animation
-> 
+>
 > ![backflip.gif](/assets/assets/images/projects/collider/backflip.gif)
-> 
 
 ### Export System
 
 Once colliders are generated, they need to be exported in formats that game engines can actually use. I implemented the
-export system using Assimp, which handles both .obj files (for static meshes) and .fbx files (for skeletal meshes with
-rigging data).
+export system using Assimp's exporter, which handles both `.obj` files for static meshes and `.fbx` for skeletal meshes
+with full rigging data. Notably, since `.fbx` is not an open format, using Assimp's exporter meant we could support it
+without significant additional effort.
 
-The tricky part was preserving all the rigging information during export. For skeletal meshes, I had to make sure the
-bone hierarchy, vertex weights, and bind poses all got written correctly to the .fbx file. I tested the exports in
-Blender to verify that the colliders maintained their rigging and deformed properly with the skeleton.
-
-Static mesh exports were more straightforward—just writing out the convex hull geometry as .obj files. But for both
-cases, I made sure the exported files kept the same coordinate system and scale as the original mesh so they'd work
-seamlessly in any game engine.
+For skeletal meshes, I had to ensure the bone hierarchy, vertex weights, and bind poses all exported correctly so the
+colliders remain properly attached to the skeleton in the destination application. The exports were tested in Blender to
+verify that colliders maintained their rigging and deformed correctly. Both static and skeletal exports preserve the
+coordinate system and scale of the original mesh, so they slot into any engine or DCC tool without manual adjustment.
 
 > #### Exported colliders
-> 
+>
 > ![export.png](/assets/assets/images/projects/collider/export.png)
-> 
+
+### Camera and Viewport
+
+I came into this project with the mindset of building a tool I'd genuinely want to use myself, and that shaped a few
+specific decisions around the viewport experience.
+
+One of those was implementing an orbit camera. It responds naturally to click-and-drag input and uses a
+longitude/latitude coordinate system paired with a distance-from-center value, with the camera always looking at the
+origin. Scrolling moves the camera closer or further, allowing precise view angles. This was completely outside the
+requirements of the project brief, but having a camera that feels natural makes inspecting a model from different angles
+fast and effortless, which matters a lot when you're iterating on decomposition parameters.
+
+The ImGUI panel also includes object transform sliders and camera controls alongside the decomposition parameters,
+keeping everything accessible from one place.
 
 ### Team Contributions
 
-While I focused on the decomposition algorithms and export, my teammates handled other critical parts of the system.
-Gordan and Patrick implemented the 3D viewer, performance metrics, animation preview system, and conducted the user
-study. The viewer was essential for visualizing results, and the metrics helped quantify the accuracy-performance
-tradeoffs of different decomposition strategies.
+While I focused on the decomposition algorithms and export system, my teammates handled other critical parts of the
+tool. Gordan and Patrick implemented the 3D viewer, performance metrics display, animation preview system, and conducted
+a user study. The metrics panel was particularly valuable for quantifying the accuracy-performance tradeoffs between
+different decomposition strategies.
 
 ## Conclusion
 
-This project solved a real problem I'd run into during game development—creating good collision meshes is way harder
-than it should be. By wrapping existing algorithms in an intuitive interface and developing a new approach for skeletal
-meshes, we made a tool that's actually practical for game developers to use.
+This project addressed a real problem I had run into during game development. Creating good collision meshes is harder
+than it should be, and existing tools either lack visual feedback, produce non-exportable results, or don't support
+skeletal meshes at all. By wrapping existing algorithms in an interactive interface and developing a new approach for
+skeletal meshes, the tool is practical for real production use.
 
-The skeletal mesh decomposition algorithm was the most technically interesting part. Figuring out how to decompose a
-mesh based on bone hierarchy and weights, then rig the results back to the skeleton, required understanding both the
-geometry and the animation side of skinned meshes. Seeing the generated colliders deform correctly with animations and
-export as usable .fbx files that work in Blender and game engines was really satisfying.
+The skeletal decomposition algorithm was the most technically interesting piece. Understanding how to partition a mesh
+by bone influence, generate convex hulls per bone, and rig those hulls back to the original skeleton required getting
+comfortable with both the geometry and the animation side of skinned meshes. Seeing the colliders deform correctly with
+animations and export cleanly as `.fbx` files was a satisfying result.
 
-The user study validated that the tool is usable—people were able to generate colliders and tune parameters without much
-trouble, though we identified some areas for improvement like adding progress indicators for long computations. Overall,
-the project demonstrated that interactive, visual tools for collision mesh generation can make a big difference in
-workflow efficiency compared to just running algorithms from the command line.
-
-Building on my experience with collision detection in PNG Chaser, this project gave me a much deeper understanding of
-the content creation side—not just how collision works in an engine, but how you actually create the collision meshes in
-the first place. The combination of geometric algorithms, mesh processing, and practical tool design made this a really
-valuable learning experience.
+Building on my earlier work with collision detection in PNG Chaser, this project gave me a much deeper understanding of
+the content creation side: not just how collision works inside an engine, but how the actual collision geometry gets
+made in the first place.
