@@ -10,11 +10,11 @@ lack a dedicated platform to showcase their progress. Argo bridges that gap.
 
 - **Skills**: Flutter, Dart, Firebase, Full-Stack Development, Cross-Platform Mobile Development
 
-<!-- Image: App screenshots -->
+![coach_dashboard.png](/assets/assets/images/projects/argo/coach_dashboard.png)
 
 ## Overview
 
-The recruiting process in rowing is surprisingly manual — coaches rely on emails, spreadsheets, and word-of-mouth to
+The recruiting process in rowing is overtly manual — coaches rely on emails, spreadsheets, and word-of-mouth to
 find talent. Argo aims to change that by providing a rowing-specific platform where athletes can build a profile and
 post workout scores, and coaches can follow athletes and receive real-time updates when new results come in.
 

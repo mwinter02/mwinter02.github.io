@@ -85,6 +85,7 @@ flutter:
     - assets/images/projects/
 
     - assets/images/projects/airobic/
+    - assets/images/projects/argo/
     - assets/images/projects/collider/
     - assets/images/projects/pacman/
     - assets/images/projects/pngchaser/
