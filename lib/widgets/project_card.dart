@@ -81,7 +81,7 @@ class _ProjectCardState extends State<ProjectCard> {
                   ),
                   // ── Hover overlay ─────────────────────────────────────────
                   AnimatedOpacity(
-                    opacity: _isHovering || isTrue ? 1.0 : 0.0,
+                    opacity: 1.0,
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.ease,
                     child: _HoverOverlay(
