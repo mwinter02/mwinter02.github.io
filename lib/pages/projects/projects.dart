@@ -39,12 +39,23 @@ class Projects {
     zombies,
     collider,
     argo,
-    terrain,
+    subwayscholar,
     urbanize,
+    terrain,
     airobic,
     pacman,
-    courses
+    // courses
   ];
+
+  static final subwayscholar = Project(
+    route: '$_projectsPath/subwayscholar',
+    imagePath: AssetSources.bannerSubwayScholar,
+    title: 'Subway Scholar',
+    description:
+        'Converts research papers into short-form content, built using agentic programming.',
+    tags: ['Agentic programming', 'LLMs',  'Python'],
+    markdownPath: getMdPath('subwayscholar'),
+  );
 
   static final zombies = Project(
     route: '$_projectsPath/zombies',

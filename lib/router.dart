@@ -24,6 +24,7 @@ class Routes {
     urbanize,
     pacman,
     courses,
+    subwayscholar,
   ];
 
   static final List<GoRoute> all = [
@@ -69,6 +70,7 @@ class Routes {
   static GoRoute pngchaser = getProjectRoute(Projects.pngchaser);
   static GoRoute collider = getProjectRoute(Projects.collider);
   static GoRoute argo = getProjectRoute(Projects.argo);
+  static GoRoute subwayscholar = getProjectRoute(Projects.subwayscholar);
   static GoRoute urbanize = getProjectRoute(Projects.urbanize);
   static GoRoute airobic = getProjectRoute(Projects.airobic);
   static GoRoute terrain = getProjectRoute(Projects.terrain);
