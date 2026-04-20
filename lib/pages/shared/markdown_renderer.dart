@@ -34,38 +34,45 @@ class MarkdownImplementation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MarkdownBody(
-      data: data,
-      // Tell the markdown parser to recognise <video src="..."> as a block.
-      blockSyntaxes: [_VideoBlockSyntax()],
-      builders: {
-        'video': _VideoElementBuilder(),
-      },
-      onTapLink: (text, href, title) async {
-        if (href != null) {
-          final Uri url = Uri.parse(href);
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url);
-          } else {
-            throw 'Could not launch $url';
+    return SizedBox(
+      width: double.infinity,
+      child: MarkdownBody(
+        data: data,
+        fitContent: false,
+        // Tell the markdown parser to recognise <video src="..."> as a block.
+        blockSyntaxes: [_VideoBlockSyntax()],
+        builders: {
+          'video': _VideoElementBuilder(),
+        },
+        onTapLink: (text, href, title) async {
+          if (href != null) {
+            final Uri url = Uri.parse(href);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url);
+            } else {
+              throw 'Could not launch $url';
+            }
           }
-        }
-      },
-      styleSheet: MarkdownStyleSheet(
-        blockquoteDecoration: const BoxDecoration(
-          color: Color(0xFF1E1E1E),
-          border: Border(left: BorderSide(color: Colors.blue, width: 4)),
+        },
+        styleSheet: MarkdownStyleSheet(
+          blockquoteDecoration: const BoxDecoration(
+            color: Color(0xFF1E1E1E),
+            // border: Border(left: BorderSide(color: Colors.deepPurple, width: 4)),
+          ),
+          codeblockDecoration: BoxDecoration(
+            color: Colors.grey.shade900,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          tableBorder: const TableBorder(
+            borderRadius: BorderRadius.zero
+          ),
+          code: AppTextTheme.monoCode,
+          h1: AppTextTheme.display.copyWith(fontSize: 48),
+          h2: AppTextTheme.displayHeadline.copyWith(fontSize: 36),
+          h3: AppTextTheme.labelSection.copyWith(fontSize: 28),
+          h4: AppTextTheme.labelSection.copyWith(fontSize: 24),
+          p: AppTextTheme.body,
         ),
-        codeblockDecoration: BoxDecoration(
-          color: Colors.grey.shade900,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        code: AppTextTheme.monoCode,
-        h1: AppTextTheme.display.copyWith(fontSize: 48),
-        h2: AppTextTheme.displayHeadline.copyWith(fontSize: 36),
-        h3: AppTextTheme.labelSection.copyWith(fontSize: 28),
-        h4: AppTextTheme.labelSection.copyWith(fontSize: 24),
-        p: AppTextTheme.body,
       ),
     );
   }
