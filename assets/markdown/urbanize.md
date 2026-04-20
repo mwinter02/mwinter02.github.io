@@ -8,9 +8,9 @@ A final project for Brown University's CSCI 1470 - "Deep Learning" course in Spr
 
 - **Skills**: Python, Deep Learning, GANs, Conditional Generation, Remote Training (SLURM/OSCAR)
 
-> Base GAN output samples
-> 
-> ![base_gan.jpg](/assets/assets/images/projects/urbanize/base_gan.jpg)
+> | Base GAN output samples |
+> |:--:|
+> | ![base_gan.jpg](/assets/assets/images/projects/urbanize/base_gan.jpg) |
 
 ## Overview
 
@@ -31,10 +31,9 @@ We implemented and compared four GAN variants, progressing from a baseline to in
 
 Conditioning was introduced through auxiliary inputs to both the generator and discriminator. All models used a standard adversarial training setup with the PP2 dataset split 80/10/10 across train, validation, and test.
 
-> Algorithmic overview of the GAN architecture
-> 
-> ![algo.jpg](/assets/assets/images/projects/urbanize/algo.jpg)
-> 
+> | Algorithmic overview of the GAN architecture |
+> |:--:|
+> | ![algo.jpg](/assets/assets/images/projects/urbanize/algo.jpg) |
 
 ### Training on OSCAR
 
@@ -46,11 +45,10 @@ The single-attribute wealth model produced clear and interpretable results. High
 
 The Wealth + Lively combination was our strongest model. High liveliness correlated with denser building layouts, visible cars, and general activity cues. The two attributes seemed to complement each other well, producing coherent and visually compelling outputs.
 
-> Wealthy Lively GAN results, left to right: low to high wealth. top to bottom: low to high liveliness.
-> 
-> ![wealthy_lively.jpg](/assets/assets/images/projects/urbanize/wealthy_lively.jpg)
-> 
-> ![wealthy_lively_2.jpg](/assets/assets/images/projects/urbanize/wealthy_lively_2.jpg)
+> | Wealthy Lively GAN results — left to right: low to high wealth, top to bottom: low to high liveliness |
+> |:--:|
+> | ![wealthy_lively.jpg](/assets/assets/images/projects/urbanize/wealthy_lively.jpg) |
+> | ![wealthy_lively_2.jpg](/assets/assets/images/projects/urbanize/wealthy_lively_2.jpg) |
 
 ### Challenges
 

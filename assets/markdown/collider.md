@@ -64,9 +64,9 @@ Both modes also include an AABB option, which represents each decomposed region 
 than a convex hull. This trades some accuracy for maximum runtime efficiency, which is useful in performance-sensitive
 contexts.
 
-> #### Static mesh decomposition UI
->
-> ![static_ui.png](/assets/assets/images/projects/collider/static_ui.png)
+> | Static mesh decomposition UI |
+> |:--:|
+> | ![static_ui.png](/assets/assets/images/projects/collider/static_ui.png) |
 
 ### Skeletal Mesh Decomposition
 
@@ -92,13 +92,13 @@ animation and can be exported as a complete skinned mesh asset. As with static m
 Because the bones rotate and translate during animation, these boxes do not remain axis-aligned at runtime, but they are
 still represented as cuboids, which keeps them efficient relative to full convex hulls.
 
-> #### Skeletal mesh decomposition UI
->
-> ![skeletal_ui.png](/assets/assets/images/projects/collider/skeletal_ui.png)
+> | Skeletal mesh decomposition UI |
+> |:--:|
+> | ![skeletal_ui.png](/assets/assets/images/projects/collider/skeletal_ui.png) |
 
-> #### Rigged colliders with animation
->
-> ![backflip.gif](/assets/assets/images/projects/collider/backflip.gif)
+> | Rigged colliders with animation |
+> |:--:|
+> | ![backflip.gif](/assets/assets/images/projects/collider/backflip.gif) |
 
 ### Export System
 
@@ -112,9 +112,9 @@ colliders remain properly attached to the skeleton in the destination applicatio
 verify that colliders maintained their rigging and deformed correctly. Both static and skeletal exports preserve the
 coordinate system and scale of the original mesh, so they slot into any engine or DCC tool without manual adjustment.
 
-> #### Exported colliders
->
-> ![export.png](/assets/assets/images/projects/collider/export.png)
+> | Exported colliders |
+> |:--:|
+> | ![export.png](/assets/assets/images/projects/collider/export.png) |
 
 ### Camera and Viewport
 

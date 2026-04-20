@@ -10,7 +10,9 @@ a custom UI, and a procedural board generation system — all in my first semest
 
 - **Skills**: Java, JavaFX, Object-Oriented Design, BFS, Procedural Generation
 
-<!-- Image: Pac-Man screenshot -->
+> | In-game screenshot |
+> |:--:|
+> | ![screenshot.png](/assets/assets/images/projects/pacman/screenshot.png)
 
 ## Overview
 
@@ -34,7 +36,22 @@ The feature I'm most proud of from this project. Rather than hardcoding the boar
 construct the maze automatically from a small set of tile pieces — corners, straight segments, and junctions. Each
 tile would detect its neighbours and automatically rotate and connect itself to form a coherent, seamless board.
 
+> |                             Input board layout                              |                                  Generated maze                                  |
+> |:---------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
+> |  ![boardLayout.png](/assets/assets/images/projects/pacman/boardLayout.png)  | ![generatedBoard.png](/assets/assets/images/projects/pacman/generatedBoard.png)  |> | ![boardLayout.png](/assets/assets/images/projects/pacman/boardLayout.png) | ![generatedBoard.png](/assets/assets/images/projects/pacman/generatedBoard.png) |
+> | ![boardLayout2.png](/assets/assets/images/projects/pacman/boardLayout2.png) | ![generatedBoard.png](/assets/assets/images/projects/pacman/generatedBoard2.png) |
+
+The entire board was generated from just two pieces — a corner tile and a straight tile — that could rotate and connect
+to each other in different configurations. The input layout was just a grid of pixels with each color corresponding to a
+wall, or space with a dot/energizer. Each tile would check the adjacent tiles to determine which piece it should be and
+how it should be rotated.
+> | Corner piece | Line piece |
+> |:--:|:--:|
+> | ![corner.png](/assets/assets/images/projects/pacman/corner.png) | ![line.png](/assets/assets/images/projects/pacman/line.png) |
+
 Getting the logic right for every possible neighbour configuration was tricky, but seeing it snap together correctly
 for the first time was one of those moments that made me realise how much I enjoyed problem solving through code.
+
+
 
 <!-- Image: Board generation / in-game screenshot -->

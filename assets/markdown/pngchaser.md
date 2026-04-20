@@ -164,7 +164,7 @@ With collision detection working, the next challenge was handling hundreds of dy
 acceleration, checking every object against every other object (O(n²)) quickly became a bottleneck. This project
 introduced two different spatial acceleration structures for different use cases.
 
-#### Bounding Volume Hierarchy (BVH)
+- Bounding Volume Hierarchy (BVH)
 
 BVH works great for static geometry. The idea is to start with all primitives and recursively split them in half,
 using the Surface Area Heuristic (SAH) to choose splits that minimize bounding volume surface area and maximize
@@ -172,13 +172,25 @@ traversal efficiency. At query time, if a node's bounding box is not hit, the en
 structure only needs to be built once and then queried constantly, it is a natural fit for level geometry and static
 props. For more detail, see [this BVH overview](https://jacco.ompf2.com/2022/04/13/how-to-build-a-bvh-part-1-basics/).
 
-For moving objects, I used a hierarchical grid structure that updates quickly and handles spatial queries efficiently.
-The system uses multiple grid levels where each level has cells twice as large as the previous. Objects are assigned
-to grid levels based on their size, with small objects in fine grids and large objects in coarser ones. When querying,
-only the relevant grid levels are checked, cutting out a huge number of unnecessary tests. This handles both small and
-large objects efficiently without rebuilding expensive structures every frame.
+- Hierarchical Grid
 
-<!-- Image: Hierarchical grid visualization -->
+For moving objects, rebuilding a BVH every frame would be too expensive, so I used a **hierarchical grid** — a sparse,
+voxel-based spatial data structure that updates cheaply and handles broad-phase queries efficiently. The structure
+consists of multiple grid levels, where each successive level has cells twice the size of the previous. Each object is
+inserted into the grid level whose cell size best fits its bounding volume — small objects live in fine-grained grids,
+large objects in coarser ones. Crucially, only occupied cells are stored (hence sparse), so memory usage stays
+proportional to the number of objects rather than the size of the world.
+
+At query time, only the grid levels relevant to the querying object's size are checked, and only the cells that
+overlap its bounding volume are tested. This cuts the number of collision candidates down dramatically compared to a
+flat grid or brute-force approach, and avoids the expensive rebuild cost of tree structures like BVH on dynamic
+geometry.
+
+> | 1D Hierarchical grid visualization |
+> |:--:|
+> | ![hgrid.png](/assets/assets/images/projects/pngchaser/hgrid.png) |
+
+- Frustum culling
 
 I also added frustum culling to optimize rendering. Each object's bounding box is tested against the view frustum, and
 anything outside it is skipped entirely, cutting down on draw calls.
@@ -187,10 +199,9 @@ The performance improvement was massive. In a stress test with 100 static floor 
 spheres exploding outward, the engine runs at a stable framerate with no drops. This proved that combining
 BVH for static objects with hierarchical grids for dynamic objects really works.
 
-> #### 2500 tightly packed spheres with stable 100+ fps
->
-> ![explode.gif](/assets/assets/images/projects/pngchaser/explode.gif)
->
+> | 2500 tightly packed spheres with stable 100+ fps |
+> |:--:|
+> | ![explode.gif](/assets/assets/images/projects/pngchaser/explode.gif) |
 
 Debugging hierarchical grids in 3D was surprisingly difficult. 1D and 2D examples made sense, but extending to three
 dimensions with multiple resolution levels took a lot of spatial reasoning. Figuring out which objects belonged in which
@@ -251,10 +262,9 @@ layouts. I paired this with a modular asset system where walls, floors, and ceil
 By providing just a few core assets, the system automatically assembles a complete backrooms-themed maze. Each
 playthrough generates a completely different layout that captures that liminal, unsettling atmosphere.
 
-> #### Chaser approaching player
->
->![chaser_lurking.png](/assets/assets/images/projects/pngchaser/chaser_lurking.png)
->
+> | Chaser approaching player |
+> |:--:|
+> | ![chaser_lurking.png](/assets/assets/images/projects/pngchaser/chaser_lurking.png) |
 
 The audio system uses RAudio for immersive 3D sound. Stereo panning shifts audio between left and right channels based
 on the chaser's position relative to the player, and volume drops with distance, building tension as it closes in. You
