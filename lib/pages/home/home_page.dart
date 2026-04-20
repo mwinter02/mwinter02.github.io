@@ -5,7 +5,6 @@ import '../../theme/theme.dart';
 import '../../widgets/about_section.dart';
 import '../business_card/business_card.dart';
 import '../shared/dynamic_widget.dart';
-import '../../widgets/profile_card.dart';
 import '../../widgets/project_gallery.dart';
 import '../../widgets/site_widgets.dart';
 import '../projects/projects.dart';
