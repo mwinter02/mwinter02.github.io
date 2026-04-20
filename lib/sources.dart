@@ -38,7 +38,7 @@ class AssetSources {
       'assets/images/banners/terrainpainter.jpg';
   static const String bannerUrbanize = 'assets/images/banners/urbanize.jpg';
   static const String bannerZombies = 'assets/images/banners/zombies.jpg';
-
+  static const String bannerSubwayScholar = 'assets/images/banners/subwayscholar.jpg';
   static const String picFish = 'assets/images/fish.jpg';
   static const String picPink = 'assets/images/pink.jpg';
   static const String picProfile = 'assets/images/profile.jpg';
