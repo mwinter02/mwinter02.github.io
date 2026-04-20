@@ -29,14 +29,14 @@ class ContactPage extends StatelessWidget {
                   name: 'Marcus Winter',
                   title: 'Software Engineer',
                   education:
-                      'M.Sc. Computer Science,\nBrown University',
+                      'M.Sc. Computer Science, Brown University',
                   interests: [
                     'Game Development',
                     'Computer Graphics',
                     'Machine Learning',
                     'Full-Stack',
                   ],
-                  profileImage: AssetImage('assets/images/headshot.jpg'),
+                  profileImage: AssetImage('assets/images/profile.jpg'),
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(32, 0, 32, 40),
@@ -87,7 +87,7 @@ class BusinessCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 860, minWidth: 320),
+        constraints: const BoxConstraints(maxWidth: 800, minWidth: 320),
         child: Container(
           decoration: _boxDecoration(),
           child: Column(
@@ -166,19 +166,19 @@ class _CardHeader extends DynamicWidget {
   Widget mobileView(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: _ProfileDetails(
-              name: name,
-              title: title,
-              education: education,
-              interests: interests,
-            ),
+          _ProfileAvatar(image: profileImage, radius: 62),
+          const SizedBox(height: 14),
+          _ProfileDetails(
+            name: name,
+            title: title,
+            education: education,
+            interests: interests,
+            centerNameOnly: true,
+            centerTitleOnly: true,
           ),
-          const SizedBox(width: 16),
-          _ProfileAvatar(image: profileImage, radius: 48),
         ],
       ),
     );
@@ -234,12 +234,16 @@ class _ProfileDetails extends StatelessWidget {
   final String title;
   final String education;
   final List<String> interests;
+  final bool centerNameOnly;
+  final bool centerTitleOnly;
 
   const _ProfileDetails({
     required this.name,
     required this.title,
     required this.education,
     required this.interests,
+    this.centerNameOnly = false,
+    this.centerTitleOnly = false,
   });
 
   @override
@@ -248,21 +252,31 @@ class _ProfileDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Name
-        Text(name, style: AppTextTheme.displayName.copyWith(fontSize: 26)),
+        Align(
+          alignment: centerNameOnly ? Alignment.center : Alignment.centerLeft,
+          child: Text(
+            name,
+            textAlign: centerNameOnly ? TextAlign.center : TextAlign.left,
+            style: AppTextTheme.displayName.copyWith(fontSize: 26),
+          ),
+        ),
         const SizedBox(height: 4),
         // Title chip
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-          decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent.withValues(alpha: 0.25),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+        Align(
+          alignment: centerTitleOnly ? Alignment.center : Alignment.centerLeft,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: BoxDecoration(
+              color: Colors.deepPurpleAccent.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(
+                color: Colors.deepPurpleAccent.withValues(alpha: 0.6),
+              ),
             ),
-          ),
-          child: Text(
-            title,
-            style: AppTextTheme.displaySubtitle.copyWith(fontSize: 13),
+            child: Text(
+              title,
+              style: AppTextTheme.displaySubtitle.copyWith(fontSize: 13),
+            ),
           ),
         ),
         const SizedBox(height: 14),
@@ -336,11 +350,74 @@ class _CardDivider extends StatelessWidget {
 // _ContactInfo
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _ContactInfo extends StatelessWidget {
+class _ContactInfo extends DynamicWidget {
   const _ContactInfo();
 
+
   @override
-  Widget build(BuildContext context) {
+  Widget desktopView(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 400;
+        final hPad = narrow ? 16.0 : 28.0;
+        final gap = narrow ? 10.0 : 16.0;
+
+        return Padding(
+          padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 8),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _Channel(
+                      icon: Icons.mail_outline,
+                      text: Sources.email,
+                      accentColor: const Color.fromARGB(255, 255, 139, 139),
+                      launchUri: Sources.emailLaunchUri,
+                    ),
+                  ),
+                  SizedBox(width: gap),
+                  Expanded(
+                    child: _Channel(
+                      icon: FontAwesomeIcons.linkedin,
+                      text: 'linkedin.com/in/mwinter02',
+                      accentColor: AppTextColors.linkedIn,
+                      launchUri: Sources.linkedInLaunchUri,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: gap),
+              Row(
+                children: [
+                  const Expanded(
+                    child: _Channel(
+                      icon: Icons.phone,
+                      text: Sources.phone,
+                      accentColor: AppTextColors.terminal,
+                      copyText: Sources.phone,
+                    ),
+                  ),
+                  SizedBox(width: gap),
+                  const Expanded(
+                    child: _Channel(
+                      icon: Icons.file_download_outlined,
+                      text: 'resume_marcus_winter.pdf',
+                      accentColor: AppTextColors.amber,
+                      onTap: Sources.downloadResume,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget mobileView(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final narrow = constraints.maxWidth < 400;

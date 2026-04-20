@@ -134,13 +134,13 @@ class _DesktopLayout extends StatelessWidget {
             ],
           ),
         ),
-        // ── Fourth panel — full width ──────────────────────────────────────
-        SizedBox(height: 20),
-        _EntranceAnimation(
-          direction: _EntranceDirection.up,
-          delay: Duration(milliseconds: 300),
-          child: KnownProfilesPanel(),
-        ),
+        // // ── Fourth panel — full width ──────────────────────────────────────
+        // SizedBox(height: 20),
+        // _EntranceAnimation(
+        //   direction: _EntranceDirection.up,
+        //   delay: Duration(milliseconds: 300),
+        //   child: KnownProfilesPanel(),
+        // ),
       ],
     );
   }

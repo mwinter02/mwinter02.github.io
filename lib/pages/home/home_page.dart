@@ -3,6 +3,7 @@ import '../../router.dart';
 import '../../theme/text_theme.dart';
 import '../../theme/theme.dart';
 import '../../widgets/about_section.dart';
+import '../business_card/business_card.dart';
 import '../shared/dynamic_widget.dart';
 import '../../widgets/profile_card.dart';
 import '../../widgets/project_gallery.dart';
@@ -56,7 +57,19 @@ class _HomePageState extends DynamicState<HomePage> {
                 SizedBox(key: HomeScrollKeys.top, height: 0),
 
                 // ── Profile card ─────────────────────────────────────────
-                const Center(child: ProfileCard()),
+                const Center(child: BusinessCard(
+                  name: 'Marcus Winter',
+                  title: 'Software Engineer',
+                  education:
+                  'M.Sc. Computer Science, Brown University',
+                  interests: [
+                    'Game Development',
+                    'Computer Graphics',
+                    'Machine Learning',
+                    'Full-Stack',
+                  ],
+                  profileImage: AssetImage('assets/images/profile.jpg'),
+                ),),
 
                 // ── Accent divider ───────────────────────────────────────
                 _accentDivider(),
