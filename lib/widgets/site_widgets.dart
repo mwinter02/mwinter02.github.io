@@ -111,7 +111,7 @@ AppBar siteAppBar(BuildContext context, {NavConfig nav = const NoNav()}) {
 // _SiteNavLinks — horizontal on wide screens, hamburger on narrow
 // ─────────────────────────────────────────────────────────────────────────────
 
-// The four nav items, defined once and shared between both layouts.
+// nav items, defined once and shared between both layouts.
 List<({String label, VoidCallback onTap})> _navItems(BuildContext context) => [
   (
     label: 'HOME',
@@ -136,15 +136,7 @@ List<({String label, VoidCallback onTap})> _navItems(BuildContext context) => [
       HomeScrollKeys.scrollAfterFrame(HomeScrollKeys.about);
     },
   ),
-  (
-    label: 'CONTACT',
-    onTap: () {
-      if (GoRouterState.of(context).uri.toString() != Routes.home.path) {
-        context.go(Routes.home.path);
-      }
-      HomeScrollKeys.scrollAfterFrame(HomeScrollKeys.contact);
-    },
-  ),
+
 ];
 
 class _SiteNavLinks extends StatelessWidget {
@@ -424,7 +416,7 @@ class _DropdownItemState extends State<_DropdownItem> {
               AnimatedOpacity(
                 opacity: _hovered ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 150),
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 10,
                   color: ThemeColors.appBarAccent,

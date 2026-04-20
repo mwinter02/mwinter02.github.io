@@ -102,7 +102,7 @@ class BusinessCard extends StatelessWidget {
               ),
               const _CardDivider(label: 'Contact Details'),
               const SizedBox(height: 8),
-              _ContactInfo(),
+              const _ContactInfo(),
               const SizedBox(height: 8),
             ],
           ),

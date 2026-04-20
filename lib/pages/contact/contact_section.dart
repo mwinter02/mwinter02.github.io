@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -6,7 +6,7 @@ import '../../sources.dart';
 import '../../theme/text_theme.dart';
 import '../shared/dynamic_widget.dart';
 import '../../widgets/site_widgets.dart';
-import 'package:web/web.dart' as web;
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // KnownProfilesPanel
@@ -27,7 +27,7 @@ import 'package:web/web.dart' as web;
 
 
 
-const double _aspectRatio = 1.75;
+
 class KnownProfilesPanel extends StatelessWidget {
   const KnownProfilesPanel({super.key});
 
