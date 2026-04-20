@@ -13,7 +13,9 @@ Java backend and User profile management and authentication through Firebase and
 - **Skills**: Java, React, Firebase, Google OAuth, Hidden Markov Models
 
 
-![home.png](/assets/assets/images/projects/airobic/home.png)
+> | AiRobic home page |
+> |:--:|
+> | ![home.png](/assets/assets/images/projects/airobic/home.png) |
 
 
 GitHub Repository: [https://github.com/gmilovac/AiRobic](https://github.com/gmilovac/AiRobic)
@@ -33,7 +35,9 @@ The front end is built with React and handles authentication through Google OAut
 manages API requests from the front end, stores user data in Firebase Realtime Database, and runs the workout
 generation logic.
 
-![plan.png](/assets/assets/images/projects/airobic/plan.jpg)
+> | Generated training plan calendar |
+> |:--:|
+> | ![plan.png](/assets/assets/images/projects/airobic/plan.jpg) |
 
 ### Workout Generation
 
@@ -42,7 +46,9 @@ matrix, and an emission distribution for each state. The `MarkovModel` class run
 and transitioning and emitting repeatedly—and loads the resulting list of workouts into whatever format is needed via
 an `EmissionFormatter` interface.
 
-![workout_generator.png](/assets/assets/images/projects/airobic/workout_generator.jpg)
+> | Workout generator overview |
+> |:--:|
+> | ![workout_generator.png](/assets/assets/images/projects/airobic/workout_generator.jpg) |
 
 ### Data Management
 
