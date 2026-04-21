@@ -13,9 +13,9 @@ Java backend and User profile management and authentication through Firebase and
 - **Skills**: Java, React, Firebase, Google OAuth, Hidden Markov Models
 
 
-> | AiRobic home page |
-> |:--:|
-> | ![home.png](/assets/assets/images/projects/airobic/home.png) |
+> |                      AiRobic home page                       |
+> |:------------------------------------------------------------:|
+> | ![home.png](/assets/assets/images/projects/airobic/home.jpg) |
 
 
 GitHub Repository: [https://github.com/gmilovac/AiRobic](https://github.com/gmilovac/AiRobic)
