@@ -55,8 +55,9 @@ class MarkdownImplementation extends StatelessWidget {
           }
         },
         styleSheet: MarkdownStyleSheet(
-          blockquoteDecoration: const BoxDecoration(
+          blockquoteDecoration:  BoxDecoration(
             color: Color(0xFF1E1E1E),
+            borderRadius: BorderRadius.circular(10),
             // border: Border(left: BorderSide(color: Colors.deepPurple, width: 4)),
           ),
           codeblockDecoration: BoxDecoration(
