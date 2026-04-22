@@ -33,8 +33,8 @@ early in my CS journey.
 ### Procedural Board Generation
 
 The feature I'm most proud of from this project. Rather than hardcoding the board layout, I built a system that could
-construct the maze automatically from a small set of tile pieces — corners, straight segments, and junctions. Each
-tile would detect its neighbours and automatically rotate and connect itself to form a coherent, seamless board.
+construct the maze automatically from a small set of tile pieces — corners and straight segments. Each
+tile would read its neighbours and automatically rotate and connect itself to form a coherent, seamless board.
 
 > |                             Input board layout                              |                                  Generated maze                                  |
 > |:---------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
