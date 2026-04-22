@@ -18,7 +18,7 @@ Human perception of urban spaces (how wealthy, lively, safe, or beautiful a plac
 
 The project uses the Place Pulse 2.0 dataset, 110,688 Google Street View images annotated through pairwise human comparisons across perceptual attributes, to train a series of conditional GAN variants.
 
-My contributions covered model training, the GAN architecture and conditioning pipeline, image generation, and running experiments remotely on Brown's OSCAR cluster via SLURM scripts.
+My contributions primarily covered data preparation and running remote training on an external GPU cluster via SLURM scripts.
 
 ### Model Architecture
 
